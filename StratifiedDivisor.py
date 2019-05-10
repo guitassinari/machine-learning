@@ -5,6 +5,8 @@
 # validation set
 # e test set
 
+from Dataset import Dataset
+import pandas as pd
 
 class StratifiedDivisor:
     def __init__(self, dataset, divisions):
@@ -16,10 +18,10 @@ class StratifiedDivisor:
         # considerar como se a contagem reinicia-se
         # Lembrando que o algoritmo deve ser estratificado, ou seja,
         # os sets divididos devem ter a mesma porcentagem de classes observadas
-        pass
+        return Dataset()
 
     def get_test_set(self, version):
-        pass
+        return Dataset()
 
     def get_validation_set(self, version):
-        pass
+        return Dataset()
