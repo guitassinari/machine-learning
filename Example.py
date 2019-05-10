@@ -4,4 +4,11 @@ class Example:
         self.attr_values = attr_values
 
     def get_attr_value(self, attr_name):
-        pass
+        attr_index = self.attr_names.index(attr_name)
+        return self.attr_values[attr_index]
+
+    def get_class(self):
+        return self.attr_values[-1]
+
+    def get_body(self):
+        return self.attr_values[0:-1]

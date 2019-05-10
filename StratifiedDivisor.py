@@ -5,23 +5,33 @@
 # validation set
 # e test set
 
-from Dataset import Dataset
-import pandas as pd
+from sklearn.model_selection import StratifiedKFold
+import numpy as np
+
 
 class StratifiedDivisor:
     def __init__(self, dataset, divisions):
-        # se divisions > exemplos no dataset, retornar erro
-        pass
+        self.bodies = dataset.get_bodies()
+        self.classes = dataset.get_classes()
+        self.training_sets_indexes = []
+        self.test_sets_indexes = []
+        parts_generator = StratifiedKFold(n_splits=divisions)\
+            .split(self.bodies, self.classes)
+
+        for train, test in parts_generator:
+            self.training_sets_indexes.append(train)
+            self.test_sets_indexes.append(test)
 
     def get_training_set(self, version):
-        # se a versão for maior que o maximo possível de variações,
-        # considerar como se a contagem reinicia-se
-        # Lembrando que o algoritmo deve ser estratificado, ou seja,
-        # os sets divididos devem ter a mesma porcentagem de classes observadas
-        return Dataset()
+        examples_indexes = self.training_sets_indexes[version]
+        return self.__get_examples(examples_indexes)
 
     def get_test_set(self, version):
-        return Dataset()
+        examples_indexes = self.test_sets_indexes[version]
+        return self.__get_examples(examples_indexes)
 
-    def get_validation_set(self, version):
-        return Dataset()
+    def __get_examples(self, set_indexes):
+        # transforma em array numpy pra poder pegar exemplos com uma lista de indices
+        np_array_examples = np.array(self.bodies)
+        filtered_examples = np_array_examples[set_indexes]
+        return filtered_examples.tolist()

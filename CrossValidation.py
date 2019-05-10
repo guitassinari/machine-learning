@@ -2,6 +2,7 @@ from StratifiedDivisor import StratifiedDivisor
 from ModelPerformance import ModelPerformance
 import numpy as np
 
+
 class CrossValidation:
     def __init__(self, hyper_parameters, model_class, n_divisions, dataset):
         self.hyper_parameters_options = hyper_parameters
