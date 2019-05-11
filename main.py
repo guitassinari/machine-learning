@@ -55,7 +55,6 @@ cv = CrossValidation(hyper_parameters_list, Forest, cv_divisions, dataset)
 
 best_hyper_parameter = cv.get_best_hyper_parameter()
 print(best_hyper_parameter)
-print(cv.get_performance_indexes())
 
 LineChart([cv.get_performance_indexes()])
 LineChart.show_charts()
