@@ -6,84 +6,59 @@ from data.Dataset import Dataset
 from model_training.CrossValidation import CrossValidation
 from models.Forest import Forest
 from charts.LineChart import LineChart
-
+from data.DatasetFile import DatasetFile
+from data.HyperParametersFile import HyperParametersFile
 import numpy as np
-import matplotlib.pyplot as plt
+import sys
 
-dataset = Dataset([
-    Example(["nome", "velho"], ["Gui", "s"]),
-    Example(["nome", "velho"], ["Samuel", "n"]),
-    Example(["nome", "velho"], ["Fernando", "s"]),
-    Example(["nome", "velho"], ["Rafael", "n"]),
-    Example(["nome", "velho"], ["Rafael", "a"]),
-    Example(["nome", "velho"], ["Rafael", "a"]),
-    Example(["nome", "velho"], ["Rafael", "d"]),
-    Example(["nome", "velho"], ["Rafael", "c"]),
-    Example(["nome", "velho"], ["Rafael", "d"]),
-    Example(["nome", "velho"], ["Rafael", "d"]),
-    Example(["nome", "velho"], ["Rafael", "c"])
-])
+# dataset = Dataset([
+#     Example(["nome", "velho"], ["Gui", "s"]),
+#     Example(["nome", "velho"], ["Samuel", "n"]),
+#     Example(["nome", "velho"], ["Fernando", "s"]),
+#     Example(["nome", "velho"], ["Rafael", "n"]),
+#     Example(["nome", "velho"], ["Rafael", "a"]),
+#     Example(["nome", "velho"], ["Rafael", "a"]),
+#     Example(["nome", "velho"], ["Rafael", "d"]),
+#     Example(["nome", "velho"], ["Rafael", "c"]),
+#     Example(["nome", "velho"], ["Rafael", "d"]),
+#     Example(["nome", "velho"], ["Rafael", "d"]),
+#     Example(["nome", "velho"], ["Rafael", "c"])
+# ])
+#
+# divisor = StratifiedDivisor(dataset, 2)
+#
+# hyper_paremeters = [{"n_trees": 1, "n_attr_sample": 2},
+#                     {"n_trees": 3, "n_attr_sample": 2}]
+#
+# cv = CrossValidation(hyper_paremeters, Forest, 2, dataset)
+#
+# print(cv.get_best_hyper_parameter())
+#
+# chart = LineChart([np.random.randn(1000)])
+# LineChart.show_charts()
+#
 
-divisor = StratifiedDivisor(dataset, 2)
 
-hyper_paremeters = [{"n_trees": 1, "n_attr_sample": 2},
-                    {"n_trees": 3, "n_attr_sample": 2}]
+dataset_file_path = sys.argv[1]
+hyper_parameters_file_path = sys.argv[2]
+cv_divisions = int(sys.argv[3])
 
-cv = CrossValidation(hyper_paremeters, Forest, 2, dataset)
+print("Dataset path:", dataset_file_path)
+print("Hyper parameters path:", hyper_parameters_file_path)
+print("Cross Validation K-Fold:", cv_divisions)
 
-print(cv.get_best_hyper_parameter())
 
-chart = LineChart([np.random.randn(1000)])
+dataset = DatasetFile(dataset_file_path).read()
+hyper_parameters_list = HyperParametersFile(hyper_parameters_file_path).read()
+
+cv = CrossValidation(hyper_parameters_list, Forest, cv_divisions, dataset)
+
+best_hyper_parameter = cv.get_best_hyper_parameter()
+print(best_hyper_parameter)
+print(cv.get_performance_indexes())
+
+LineChart([cv.get_performance_indexes()])
 LineChart.show_charts()
 
-# dataset = DatasetFile("dadosBenchmark_validacaoAlgoritmoAD.csv").read()
-#
-# divisions = 5
-# hyper_parameters_options = [
-#     {
-#         'number_of_trees': 5,
-#         'number_of_attr_samples': 5
-#     }
-# ]
-#
-# print(f'Dataset será dividido em {divisions} partes, das quais uma para teste e uma para validação')
-#
-# dataset = DatasetFile("path").read
-# divisor = StratifiedDivisor(dataset, divisions)
-#
-# forests = []
-# for hyper_parameter in hyper_parameters_options:
-#     forests.append(Forest(hyper_parameter['number_of_trees'],
-#                           hyper_parameter['number_of_attr_samples']
-#                           ))
-#
-# performances = []
-# for forest in forests:
-#     performances.append(ModelPerformance())
-#
-# # para cada possibilidade de divisão do dataset original (Ver Cross Validation)
-# for i in range(divisions):
-#     training_set = divisor.get_training_set(i)
-#     test_set = divisor.get_test_set(i)
-#     validation_set = divisor.get_validation_set(i)
-#
-#     # calcular a performance de cada floresta (média e desvio padrão)
-#     for forest_index in range(len(forests)):
-#         forest = forests[forest_index]
-#         forest.train_with(training_set)
-#         performances[forest_index].evaluate(forest, validation_set)
-#
-# # é assim mesmo que vamos validar o melhor modelo?
-# performance_indicators = map(lambda performance: performance.indicator, performances)
-# best_performance_index = performance_indicators.index(min(performance_indicators))
-# best_hyper_parameters = hyper_parameters_options[best_performance_index]
-#
-#
-# # a partir daqui, treinar o melhor modelo (best_config) com training set e validation set
-# #depois, testar a performance com test_set
-#
-# forest = Forest(best_hyper_parameters['number_of_trees'],
-#                 best_hyper_parameters['number_of_attr_samples'])
-#
-# # treinar com training_set + validation_set
-# # forest.train_with()
+
+best_forest = Forest(best_hyper_parameter, dataset)

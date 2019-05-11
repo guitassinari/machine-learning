@@ -11,12 +11,16 @@ class CrossValidation:
         self.divisions = n_divisions
         pass
 
-    def get_best_hyper_parameter(self):
+    def get_performance_indexes(self):
         performances = []
         for parameters_index in range(len(self.hyper_parameters_options)):
             hyper_parameters = self.__hyper_parameters_at(parameters_index)
             performance = self.__calculate_performance_for(hyper_parameters)
             performances.append(performance)
+        return performances
+
+    def get_best_hyper_parameter(self):
+        performances = self.get_performance_indexes()
         best_performance_index = performances.index(np.max(performances))
         return self.__hyper_parameters_at(best_performance_index)
 

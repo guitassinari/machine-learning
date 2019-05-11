@@ -2,7 +2,7 @@ import random
 
 
 class Forest:
-    TEST = ["a", "c", "d", "n", "s"]
+    TEST = ["Nao", "Sim"]
 
     def __init__(self, hyper_parameters, training_set):
         self.number_of_trees = hyper_parameters["n_trees"]
