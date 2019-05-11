@@ -1,5 +1,5 @@
-from ConfusionMatrix import ConfusionMatrix
-from ConfusionMatrixToConfusionTable import ConfusionMatrixToConfusionTable
+from performance.ConfusionMatrix import ConfusionMatrix
+from performance.ConfusionMatrixToConfusionTable import ConfusionMatrixToConfusionTable
 import numpy as np
 
 

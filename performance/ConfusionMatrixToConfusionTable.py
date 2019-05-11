@@ -1,4 +1,4 @@
-from ConfusionTable import ConfusionTable
+from performance.ConfusionTable import ConfusionTable
 
 
 class ConfusionMatrixToConfusionTable:

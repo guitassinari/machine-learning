@@ -1,12 +1,11 @@
 # coding: utf-8
 
-from DatasetFile import DatasetFile
-from StratifiedDivisor import StratifiedDivisor
-from Forest import Forest
-from ModelPerformance import ModelPerformance
-from Example import Example
-from Dataset import Dataset
-from ConfusionMatrix import ConfusionMatrix
+from model_training.StratifiedDivisor import StratifiedDivisor
+from models.Forest import Forest
+from performance.ModelPerformance import ModelPerformance
+from data.Example import Example
+from data.Dataset import Dataset
+from performance.ConfusionMatrix import ConfusionMatrix
 
 dataset = Dataset([
     Example(["nome", "velho"], ["Gui", "s"]),

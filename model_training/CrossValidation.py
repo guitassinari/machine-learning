@@ -1,5 +1,5 @@
-from StratifiedDivisor import StratifiedDivisor
-from ModelPerformance import ModelPerformance
+from model_training.StratifiedDivisor import StratifiedDivisor
+from performance.ModelPerformance import ModelPerformance
 import numpy as np
 
 

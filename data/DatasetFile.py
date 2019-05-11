@@ -1,6 +1,6 @@
 import csv
-from Dataset import Dataset
-from Example import Example
+from data.Dataset import Dataset
+from data.Example import Example
 
 
 class DatasetFile:
