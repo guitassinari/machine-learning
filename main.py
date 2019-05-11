@@ -5,6 +5,10 @@ from data.Example import Example
 from data.Dataset import Dataset
 from model_training.CrossValidation import CrossValidation
 from models.Forest import Forest
+from charts.LineChart import LineChart
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 dataset = Dataset([
     Example(["nome", "velho"], ["Gui", "s"]),
@@ -28,6 +32,10 @@ hyper_paremeters = [{"n_trees": 1, "n_attr_sample": 2},
 cv = CrossValidation(hyper_paremeters, Forest, 2, dataset)
 
 print(cv.get_best_hyper_parameter())
+
+chart = LineChart([np.random.randn(1000)])
+LineChart.show_charts()
+
 # dataset = DatasetFile("dadosBenchmark_validacaoAlgoritmoAD.csv").read()
 #
 # divisions = 5

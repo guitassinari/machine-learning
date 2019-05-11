@@ -1,5 +1,6 @@
 import random
 
+
 class Forest:
     TEST = ["a", "c", "d", "n", "s"]
 
