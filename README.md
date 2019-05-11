@@ -15,6 +15,24 @@ Instalar usando
 pip3 install pandas
 ```
 
+#### Sklearn
+https://scikit-learn.org/stable/
+
+Instalar usando
+
+```
+pip3 install sklearn
+```
+
+#### Matplotlib
+https://matplotlib.org/
+
+Instalar usando
+
+```
+pip3 install matplotlib
+```
+
 ### Estrutura
 
 #### Passo a passo
