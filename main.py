@@ -4,17 +4,30 @@ from DatasetFile import DatasetFile
 from StratifiedDivisor import StratifiedDivisor
 from Forest import Forest
 from ModelPerformance import ModelPerformance
-from DatasetFile import DatasetFile
 from Example import Example
 from Dataset import Dataset
+from ConfusionMatrix import ConfusionMatrix
 
-example1 = Example(["nome", "velho"], ["Gui", "s"])
-example2 = Example(["nome", "velho"], ["Samuel", "n"])
-example3 = Example(["nome", "velho"], ["Fernando", "s"])
-example4 = Example(["nome", "velho"], ["Rafael", "n"])
+dataset = Dataset([
+    Example(["nome", "velho"], ["Gui", "s"]),
+    Example(["nome", "velho"], ["Samuel", "n"]),
+    Example(["nome", "velho"], ["Fernando", "s"]),
+    Example(["nome", "velho"], ["Rafael", "n"]),
+    Example(["nome", "velho"], ["Rafael", "a"]),
+    Example(["nome", "velho"], ["Rafael", "a"]),
+    Example(["nome", "velho"], ["Rafael", "d"]),
+    Example(["nome", "velho"], ["Rafael", "c"]),
+    Example(["nome", "velho"], ["Rafael", "d"]),
+    Example(["nome", "velho"], ["Rafael", "a"])
+])
 
-dataset = Dataset([example1, example2, example3, example4])
 divisor = StratifiedDivisor(dataset, 2)
+
+model = Forest({"n_trees": 1, "n_attr_sample": 2})
+matrix = ConfusionMatrix(model, dataset)
+performance = ModelPerformance(model, dataset)
+
+print(performance.f1_measure())
 
 # dataset = DatasetFile("dadosBenchmark_validacaoAlgoritmoAD.csv").read()
 #

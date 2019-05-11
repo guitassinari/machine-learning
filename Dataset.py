@@ -12,3 +12,11 @@ class Dataset:
         return list(map(lambda example: example.get_attr_value(attr_name),
                         self.examples))
 
+    def get_uniq_classes(self):
+        unique_list = []
+        all_classes = self.get_classes()
+        for klass in all_classes:
+            if klass not in unique_list:
+                unique_list.append(klass)
+        return unique_list
+

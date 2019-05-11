@@ -1,14 +1,13 @@
+import random
+
 class Forest:
-    def __init__(self, number_of_trees, attr_sample_num):
-        pass
+    TEST = ["a", "c", "d", "n", "s"]
+
+    def __init__(self, hyper_parameters):
+        self.number_of_trees = hyper_parameters["n_trees"]
+        self.attr_sample_num = hyper_parameters["n_attr_sample"]
 
     def predict(self, example):
         # utilizar as árvores de decisão e, a partir das suas predições
         # utilizar o algoritmo de votação majoritária
-        pass
-
-    def train_with(self, training_set):
-        # TODO: a partir de amostragens geradas pelo algoritmo
-        # de Bootstrap e o training_set, treinar todas as
-        # number_of_trees árvores de decisão
-        pass
+        return random.choice(self.TEST)
