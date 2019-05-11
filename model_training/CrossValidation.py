@@ -20,9 +20,9 @@ class CrossValidation:
         best_performance_index = performances.index(np.max(performances))
         return self.__hyper_parameters_at(best_performance_index)
 
-    def __calculate_performance_for(self, hyper_parameters, divisions):
+    def __calculate_performance_for(self, hyper_parameters):
         individual_performances = []
-        for division_version in range(divisions):
+        for division_version in range(self.divisions):
             model = self.__create_model(hyper_parameters, division_version)
             performance_index = self.__model_performance_index(model, division_version)
             individual_performances.append(performance_index)
@@ -37,5 +37,5 @@ class CrossValidation:
 
     def __model_performance_index(self, model, division_version):
         test_set = self.divisor.get_test_set(division_version)
-        return ModelPerformance(model, test_set).f1_measure
+        return ModelPerformance(model, test_set).f1_measure()
 

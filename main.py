@@ -1,11 +1,10 @@
 # coding: utf-8
 
 from model_training.StratifiedDivisor import StratifiedDivisor
-from models.Forest import Forest
-from performance.ModelPerformance import ModelPerformance
 from data.Example import Example
 from data.Dataset import Dataset
-from performance.ConfusionMatrix import ConfusionMatrix
+from model_training.CrossValidation import CrossValidation
+from models.Forest import Forest
 
 dataset = Dataset([
     Example(["nome", "velho"], ["Gui", "s"]),
@@ -17,17 +16,18 @@ dataset = Dataset([
     Example(["nome", "velho"], ["Rafael", "d"]),
     Example(["nome", "velho"], ["Rafael", "c"]),
     Example(["nome", "velho"], ["Rafael", "d"]),
-    Example(["nome", "velho"], ["Rafael", "a"])
+    Example(["nome", "velho"], ["Rafael", "d"]),
+    Example(["nome", "velho"], ["Rafael", "c"])
 ])
 
 divisor = StratifiedDivisor(dataset, 2)
 
-model = Forest({"n_trees": 1, "n_attr_sample": 2})
-matrix = ConfusionMatrix(model, dataset)
-performance = ModelPerformance(model, dataset)
+hyper_paremeters = [{"n_trees": 1, "n_attr_sample": 2},
+                    {"n_trees": 3, "n_attr_sample": 2}]
 
-print(performance.f1_measure())
+cv = CrossValidation(hyper_paremeters, Forest, 2, dataset)
 
+print(cv.get_best_hyper_parameter())
 # dataset = DatasetFile("dadosBenchmark_validacaoAlgoritmoAD.csv").read()
 #
 # divisions = 5

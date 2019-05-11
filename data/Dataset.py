@@ -20,3 +20,6 @@ class Dataset:
                 unique_list.append(klass)
         return unique_list
 
+    def get_examples(self):
+        return self.examples.copy()
+
