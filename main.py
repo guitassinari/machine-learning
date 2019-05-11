@@ -50,14 +50,14 @@ print("Cross Validation K-Fold:", cv_divisions)
 
 dataset = DatasetFile(dataset_file_path).read()
 hyper_parameters_list = HyperParametersFile(hyper_parameters_file_path).read()
+#
+# cv = CrossValidation(hyper_parameters_list, Forest, cv_divisions, dataset)
+#
+# best_hyper_parameter = cv.get_best_hyper_parameter()
+# print(best_hyper_parameter)
+#
+# LineChart([cv.get_performance_indexes()])
+# LineChart.show_charts()
 
-cv = CrossValidation(hyper_parameters_list, Forest, cv_divisions, dataset)
 
-best_hyper_parameter = cv.get_best_hyper_parameter()
-print(best_hyper_parameter)
-
-LineChart([cv.get_performance_indexes()])
-LineChart.show_charts()
-
-
-best_forest = Forest(best_hyper_parameter, dataset)
+best_forest = Forest(hyper_parameters_list[0], dataset)

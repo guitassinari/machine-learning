@@ -23,3 +23,6 @@ class Dataset:
     def get_examples(self):
         return self.examples.copy()
 
+    def size(self):
+        return len(self.examples)
+
