@@ -1,0 +1,11 @@
+{
+  "parameters": [
+    { "n_trees": 2, "n_attr_sample": 2 },
+    { "n_trees": 2, "n_attr_sample": 2 },
+    { "n_trees": 2, "n_attr_sample": 2 },
+    { "n_trees": 2, "n_attr_sample": 2 },
+    { "n_trees": 2, "n_attr_sample": 2 },
+    { "n_trees": 2, "n_attr_sample": 2 },
+    { "n_trees": 2, "n_attr_sample": 2 }
+  ]
+}

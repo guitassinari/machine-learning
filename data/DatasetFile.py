@@ -20,6 +20,3 @@ class DatasetFile:
                 else:
                     examples.append(Example(attr_names, row))
         return Dataset(examples)
-
-
-        # ler o arquivo em file_path e retornar um Dataset
