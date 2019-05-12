@@ -31,8 +31,7 @@ class DecisionTree:
     def __init__(self, hyper_parameters, training_set):
         self.training_set = training_set
         self.hyper_parameters = hyper_parameters
-        self.attr_sample_num = hyper_parameters["attr_sample_num"]
-        self.depth = hyper_parameters["depth"]
+        self.attr_sample_num = hyper_parameters["n_attr_sample"]
         self.root = self.__create_root_node()
 
     def predict(self, example):
