@@ -8,7 +8,7 @@ class Forest:
     def __init__(self, hyper_parameters, training_set):
         """
         Inicializa a floresta com suas árvores.
-        
+
         :param hyper_parameters: dictionary/hash contendo os hiper parâmetros
         :param training_set: dataset de treinamento
         """

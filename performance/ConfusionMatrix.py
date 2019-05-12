@@ -1,3 +1,17 @@
+"""
+    Uma matriz de confusão. Não confundir com uma tabela de confusão.
+
+    A matrix de confusão possui mais do que uma duas linhas e duas colunas,
+    por isso difere da tabela de confusão, que possui duas linhas e duas colunas
+
+    Para criar a matriz de confusão escolhi o formato de dictionary da seguinte maneira:
+
+    O dict
+
+    - O primeiro nível do dictionary uma linha da matriz de confusão.
+
+"""
+
 class ConfusionMatrix:
     BETA = 1
 

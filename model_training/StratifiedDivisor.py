@@ -1,9 +1,9 @@
 # coding: utf-8
 
-# Dividir o dataset em partes e, a partir dessas partes, selecionar
-# training set
-# validation set
-# e test set
+"""
+    Dividir o dataset em partes e, a partir dessas partes, selecionar
+"""
+
 
 from sklearn.model_selection import StratifiedKFold
 import numpy as np
