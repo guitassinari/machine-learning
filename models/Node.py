@@ -15,7 +15,7 @@ class Node:
         self.n_attr_sample = hyper_parameters["n_attr_sample"]
         self.dataset = dataset
         self.attribute = self.__best_attribute()
-        self.children_nodes = []
+        print(self.attribute, self.n_attr_sample)
         if not (self.pure() or self.empty()):
             self.splitter = self.__split()
 
@@ -72,10 +72,11 @@ class Node:
         :return: nome do melhor atributo para este node
         """
         attributes = self.__attributes_sample()
-        attributes_info_gain = map(
+        attributes_info_gain = list(map(
             lambda attr: InfoGain(attr, self.dataset).value(),
             attributes
-        )
+        ))
+        print(attributes_info_gain)
         return attributes.index(np.max(attributes_info_gain))
 
     def __attributes_sample(self):
