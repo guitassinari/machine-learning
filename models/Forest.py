@@ -37,4 +37,16 @@ class Forest:
         :param example: instância na forma de um Example para a qual se quer prever a classe
         :return: classe predita para o example
         """
-        return random.choice(self.training_set.get_uniq_classes())
+        predictions = self.__trees_predictions_for(example)
+        max_frequency_so_far = 0
+        major = predictions[0]
+        for klass in predictions:
+            klass_frequency = predictions.count(klass)
+            if klass_frequency > max_frequency_so_far:
+                max_frequency_so_far = klass_frequency
+                major = klass
+
+        return major
+
+    def __trees_predictions_for(self, example):
+        return map(lambda tree: tree.predict(example), self.trees)

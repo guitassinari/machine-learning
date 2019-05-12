@@ -63,6 +63,17 @@ class Dataset:
                 unique_list.append(klass)
         return unique_list
 
+    def get_uniq_attr_values(self, attr_name):
+        unique_list = []
+        all_values = self.get_attr_value(attr_name)
+        for value in all_values:
+            if value not in unique_list:
+                unique_list.append(value)
+        return unique_list
+
+    def get_attr_names(self):
+        return self.examples[0].get_attr_names()
+
     def get_examples(self):
         """
         Retorna uma lista com os todos os exemplos do dataset
@@ -85,3 +96,24 @@ class Dataset:
         """
         return len(self.examples)
 
+    def get_attr_type(self, attr_name):
+        return self.examples[0].get_attr_type(attr_name)
+
+    def major_class(self):
+        classes = self.get_classes()
+        max_frequency_so_far = 0
+        major = classes[0]
+        for klass in classes:
+            klass_frequency = classes.count(klass)
+            if klass_frequency > max_frequency_so_far:
+                max_frequency_so_far = klass_frequency
+                major = klass
+
+        return major
+
+    def split_dataset_for(self, attr_name, attr_value):
+        new_dataset = []
+        for example in self.get_examples():
+            if example.get_attr_value(attr_name) == attr_value:
+                new_dataset.append(example)
+        return Dataset(new_dataset)

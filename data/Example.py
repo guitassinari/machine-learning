@@ -1,3 +1,4 @@
+from data.Attribute import AttributeType
 """
 Uma instância é um conjunto de atributos e uma classe
 {
@@ -38,3 +39,14 @@ class Example:
         :return: valores de todos os atributos, menos o da classe
         """
         return self.attr_values[0:-1]
+
+    def get_attr_names(self):
+        return self.attr_names[0:-1].copy()
+
+    def get_attr_type(self, attr_name):
+        value = self.get_attr_value(attr_name)
+        try:
+            float(value)
+            return AttributeType.NUMERIC
+        except ValueError:
+            return AttributeType.CATEGORIC
