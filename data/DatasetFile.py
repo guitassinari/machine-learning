@@ -4,7 +4,7 @@ from data.Example import Example
 
 
 class DatasetFile:
-    CLASS_AT = 0
+    CLASS_AT = 1
 
     def __init__(self, file_path):
         self.file_path = file_path

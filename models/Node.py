@@ -5,15 +5,20 @@ from data.Attribute import AttributeType
 
 
 class Node:
+    MAX_DEPTH = 5
     """
     Essa classe repreenta um nodo da árvore de decisão
     """
 
-    def __init__(self, hyper_parameters, dataset):
+    def __init__(self, hyper_parameters, dataset, depth=1):
+        self.depth = depth
         self.hyper_parameters = hyper_parameters
         self.n_attr_sample = hyper_parameters["n_attr_sample"]
         self.dataset = dataset
-        if not (dataset.empty() or dataset.pure()):
+        self.attr_names = dataset.get_attr_names()
+        self.splitter = None
+        self.attribute = None
+        if (not (dataset.empty() or dataset.pure())) and depth <= self.MAX_DEPTH:
             self.attribute = self.__best_attribute()
             self.splitter = self.__split()
 
@@ -24,17 +29,20 @@ class Node:
 
         # Se só tiver uma classe no seu dataset, retorna essa classe
         if self.dataset.pure():
-            return self.dataset.get_classes()[0]
+            return self.dataset.get_example_at(0).get_class()
+
+        if self.splitter is None:
+            return self.dataset.major_class()
 
         # Manda a predição pros nodes filhos
         prediction = self.splitter.predict(example)
 
         # Se a predição de nodes filhos é nula, retorna a classe mais frequente
         # no dataset
-        if prediction is None:
-            return self.dataset.major_class()
-        else:
+        if prediction is not None:
             return prediction
+
+        return self.dataset.major_class()
 
     def __split(self):
         """
@@ -48,7 +56,7 @@ class Node:
     def __create_splitter(self):
         attr_type = self.dataset.get_attr_type(self.attribute)
         SplitterClass = NodeSplitStrategy.for_type(attr_type)
-        return SplitterClass(self.hyper_parameters, self.dataset, self.attribute)
+        return SplitterClass(self.hyper_parameters, self.dataset, self.attribute, self.depth)
 
     def __best_attribute(self):
         """
@@ -69,8 +77,7 @@ class Node:
         pega uma amostra de tamanho n_attr_sample dos atributos possíveis
         :return: uma lista de atributos
         """
-        all_attributes = self.dataset.get_attr_names()
-        return random.sample(all_attributes, self.n_attr_sample)
+        return random.sample(self.attr_names, self.n_attr_sample)
 
 
 class NodeSplitStrategy:
@@ -90,7 +97,8 @@ class NumericSplitter:
     """
     Divisor de node para atributos numéricos
     """
-    def __init__(self, hyper_parameters, dataset, attr_name):
+    def __init__(self, hyper_parameters, dataset, attr_name, depth):
+        self.depth = depth
         self.hyper_parameters = hyper_parameters
         self.dataset = dataset
         self.attr_name = attr_name
@@ -130,8 +138,8 @@ class NumericSplitter:
             else:
                 second_dataset_indexes.append(i)
         return [
-            Node(self.hyper_parameters, self.dataset.subset(first_dataset_indexes)),
-            Node(self.hyper_parameters, self.dataset.subset(second_dataset_indexes))
+            Node(self.hyper_parameters, self.dataset.subset(first_dataset_indexes), self.depth+1),
+            Node(self.hyper_parameters, self.dataset.subset(second_dataset_indexes), self.depth+1)
         ]
 
     def __mean(self):
@@ -146,7 +154,8 @@ class NumericSplitter:
 
 
 class CategoricSplitter:
-    def __init__(self, hyper_parameters, dataset, attr_name):
+    def __init__(self, hyper_parameters, dataset, attr_name, depth):
+        self.depth = depth
         self.hyper_parameters = hyper_parameters
         self.dataset = dataset
         self.attr_name = attr_name
@@ -162,7 +171,7 @@ class CategoricSplitter:
         nodes = []
         for value in self.possible_values:
             split_dataset = self.__split_dataset_for(value)
-            nodes.append(Node(self.hyper_parameters, split_dataset))
+            nodes.append(Node(self.hyper_parameters, split_dataset, self.depth+1))
         return nodes
 
     def __split_dataset_for(self, attr_value):

@@ -1,5 +1,6 @@
 from sklearn.utils import resample
-import numpy as np
+from models.InfoGain import InfoGain
+
 
 class Dataset:
     """Classe que engloba um Dataset (lista de instâncias / Examples)
@@ -10,6 +11,7 @@ class Dataset:
     pela classe Example. Para melhores informações, ver a documentação em data/Example.
     """
     def __init__(self, examples, attr_names=None, possible_classes=None, attr_values=None):
+        self.__major_class = None
         self.examples = examples
         self.attr_names = attr_names or examples[0].get_attr_names()
         self.possible_classes = possible_classes or self.__uniq_classes()
@@ -114,6 +116,11 @@ class Dataset:
         return self.examples[0].get_attr_type(attr_name)
 
     def major_class(self):
+        if self.__major_class is None:
+            self.__major_class = self.__find_major_klass()
+        return self.__major_class
+
+    def __find_major_klass(self):
         classes = self.get_classes()
         max_frequency_so_far = 0
         major = classes[0]
@@ -126,15 +133,14 @@ class Dataset:
 
     def split_dataset_for(self, attr_name, attr_value):
         new_dataset = []
-        examples = self.get_examples()
-        for i in range(len(examples)):
-            example = examples[i]
+        for i in range(len(self.examples)):
+            example = self.examples[i]
             if example.get_attr_value(attr_name) == attr_value:
                 new_dataset.append(i)
         return self.subset(new_dataset)
 
     def empty(self):
-        return len(self.get_examples()) == 0
+        return len(self.examples) == 0
 
     def pure(self):
         classes = self.get_classes()
@@ -142,7 +148,7 @@ class Dataset:
         return classes.count(first_klass) == len(classes)
 
     def resample(self, sample_size):
-        examples = resample(self.get_examples(),
+        examples = resample(self.examples,
                                 n_samples=sample_size,
                                 stratify=self.get_classes())
         return Dataset(examples,
@@ -159,6 +165,10 @@ class Dataset:
 
     def __get_examples_by_multiple_indexes(self, set_indexes):
         # transforma em array numpy pra poder pegar exemplos com uma lista de indices
-        np_array_examples = np.array(self.get_examples())
-        filtered_examples = np_array_examples[set_indexes]
-        return filtered_examples.tolist()
+        filtered_examples = []
+        for index in set_indexes:
+            filtered_examples.append(self.get_example_at(index))
+        return filtered_examples
+
+    def get_example_at(self, index):
+        return self.examples[index]

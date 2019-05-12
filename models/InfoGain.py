@@ -7,7 +7,6 @@ class InfoGain:
         self.attr_name = attr_name
 
     def value(self):
-
         dataset_entropy = Entropy(self.dataset)
         gain = dataset_entropy.total() - dataset_entropy.for_attribute(self.attr_name)
         return round(gain, 4)
