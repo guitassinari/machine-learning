@@ -11,20 +11,7 @@ from data.HyperParametersFile import HyperParametersFile
 import numpy as np
 import sys
 
-dataset = Dataset([
-    Example(["nome", "velho"], ["Gui", "s"]),
-    Example(["nome", "velho"], ["Samuel", "n"]),
-    Example(["nome", "velho"], ["Fernando", "s"]),
-    Example(["nome", "velho"], ["Rafael", "n"]),
-    Example(["nome", "velho"], ["Rafael", "a"]),
-    Example(["nome", "velho"], ["Rafael", "a"]),
-    Example(["nome", "velho"], ["Rafael", "d"]),
-    Example(["nome", "velho"], ["Rafael", "c"]),
-    Example(["nome", "velho"], ["Rafael", "d"]),
-    Example(["nome", "velho"], ["Rafael", "d"]),
-    Example(["nome", "velho"], ["Rafael", "c"])
-])
-#
+
 # divisor = StratifiedDivisor(dataset, 2)
 #
 # hyper_paremeters = [{"n_trees": 1, "n_attr_sample": 2},
@@ -42,26 +29,21 @@ dataset = Dataset([
 dataset_file_path = sys.argv[1]
 hyper_parameters_file_path = sys.argv[2]
 cv_divisions = int(sys.argv[3])
-#
-# print("Dataset path:", dataset_file_path)
-# print("Hyper parameters path:", hyper_parameters_file_path)
-# print("Cross Validation K-Fold:", cv_divisions)
-#
-#
+
+print("Dataset path:", dataset_file_path)
+print("Hyper parameters path:", hyper_parameters_file_path)
+print("Cross Validation K-Fold:", cv_divisions)
+
 dataset = DatasetFile(dataset_file_path).read()
 hyper_parameters_list = HyperParametersFile(hyper_parameters_file_path).read()
-#
+
 cv = CrossValidation(hyper_parameters_list, Forest, cv_divisions, dataset)
-#
-# best_hyper_parameter = cv.get_best_hyper_parameter()
-# print(best_hyper_parameter)
-#
-# LineChart([cv.get_performance_indexes()])
-# LineChart.show_charts()
+
+best_hyper_parameter = cv.get_best_hyper_parameter()
+print(best_hyper_parameter)
+
+LineChart([cv.get_performance_indexes()])
+LineChart.show_charts()
 
 
-# best_forest = Forest(hyper_parameters_list[0], dataset)
-
-from models.Node import Node
-
-Node(hyper_parameters_list[0], dataset)
+best_forest = Forest(hyper_parameters_list[0], dataset)

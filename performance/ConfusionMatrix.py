@@ -30,7 +30,7 @@ class ConfusionMatrix:
 
         for example in test_set.examples:
             correct_klass = example.get_class()
-            predicted_klass = model.predict(example.get_body())
+            predicted_klass = model.predict(example)
             confusion_hash[predicted_klass][correct_klass] += 1
 
         self.classes = possible_classes

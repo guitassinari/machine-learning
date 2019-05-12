@@ -35,4 +35,7 @@ class Entropy:
 
     def __probability_for(self, klass):
         all_classes = self.dataset.get_classes()
-        return all_classes.count(klass) / len(all_classes)
+        prob = all_classes.count(klass) / len(all_classes)
+        if prob == 0:
+            raise Exception("Probability of class is 0")
+        return prob

@@ -6,7 +6,6 @@ class ConfusionTable:
         self.true_negatives = tn
         self.false_positives = fp
         self.false_negatives = fn
-        print(tp, tn, fp, fn)
 
     def f_score(self):
         if self.precision() == 0: # evitar divisão por 0

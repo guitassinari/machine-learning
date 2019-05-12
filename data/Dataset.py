@@ -1,3 +1,6 @@
+from sklearn.utils import resample
+import numpy as np
+
 class Dataset:
     """Classe que engloba um Dataset (lista de instâncias / Examples)
 
@@ -6,8 +9,12 @@ class Dataset:
     Encaramos um dataset como uma lista de instâncias. Cada instância é encapsulada
     pela classe Example. Para melhores informações, ver a documentação em data/Example.
     """
-    def __init__(self, examples):
+    def __init__(self, examples, attr_names=None, possible_classes=None, attr_values=None):
         self.examples = examples
+        self.attr_names = attr_names or examples[0].get_attr_names()
+        self.possible_classes = possible_classes or self.__uniq_classes()
+        self.attr_values = attr_values or\
+                           list(map(lambda attr_name: self.__get_uniq_attr_values_from_examples(attr_name), self.attr_names))
 
     def get_classes(self):
         """
@@ -56,14 +63,13 @@ class Dataset:
         Exemplo:
         ["sim", "nao"]
         """
-        unique_list = []
-        all_classes = self.get_classes()
-        for klass in all_classes:
-            if klass not in unique_list:
-                unique_list.append(klass)
-        return unique_list
+        return self.possible_classes.copy()
 
     def get_uniq_attr_values(self, attr_name):
+        attr_index = self.attr_names.index(attr_name)
+        return self.attr_values[attr_index].copy()
+
+    def __get_uniq_attr_values_from_examples(self, attr_name):
         unique_list = []
         all_values = self.get_attr_value(attr_name)
         for value in all_values:
@@ -71,8 +77,16 @@ class Dataset:
                 unique_list.append(value)
         return unique_list
 
+    def __uniq_classes(self):
+        unique_list = []
+        all_classes = self.get_classes()
+        for klass in all_classes:
+            if klass not in unique_list:
+                unique_list.append(klass)
+        return unique_list
+
     def get_attr_names(self):
-        return self.examples[0].get_attr_names()
+        return self.attr_names.copy()
 
     def get_examples(self):
         """
@@ -108,12 +122,43 @@ class Dataset:
             if klass_frequency > max_frequency_so_far:
                 max_frequency_so_far = klass_frequency
                 major = klass
-
         return major
 
     def split_dataset_for(self, attr_name, attr_value):
         new_dataset = []
-        for example in self.get_examples():
+        examples = self.get_examples()
+        for i in range(len(self.get_examples())):
+            example = examples[i]
             if example.get_attr_value(attr_name) == attr_value:
-                new_dataset.append(example)
-        return Dataset(new_dataset)
+                new_dataset.append(i)
+        return self.subset(new_dataset)
+
+    def empty(self):
+        return len(self.get_examples()) == 0
+
+    def pure(self):
+        classes = self.get_classes()
+        first_klass = classes[0]
+        return classes.count(first_klass) == len(classes)
+
+    def resample(self, sample_size):
+        examples = resample(self.get_examples(),
+                                n_samples=sample_size,
+                                stratify=self.get_classes())
+        return Dataset(examples,
+                       self.attr_names.copy(),
+                       self.possible_classes.copy(),
+                       self.attr_values.copy())
+
+    def subset(self, examples_indexes):
+        examples = self.__get_examples_by_multiple_indexes(examples_indexes)
+        return Dataset(examples,
+                       self.attr_names.copy(),
+                       self.possible_classes.copy(),
+                       self.attr_values.copy())
+
+    def __get_examples_by_multiple_indexes(self, set_indexes):
+        # transforma em array numpy pra poder pegar exemplos com uma lista de indices
+        np_array_examples = np.array(self.get_examples())
+        filtered_examples = np_array_examples[set_indexes]
+        return filtered_examples.tolist()

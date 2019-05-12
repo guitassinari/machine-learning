@@ -14,19 +14,18 @@ class Node:
         self.hyper_parameters = hyper_parameters
         self.n_attr_sample = hyper_parameters["n_attr_sample"]
         self.dataset = dataset
-        self.attribute = self.__best_attribute()
-        print(self.attribute, self.n_attr_sample)
-        if not (self.pure() or self.empty()):
+        if not (dataset.empty() or dataset.pure()):
+            self.attribute = self.__best_attribute()
             self.splitter = self.__split()
 
     def predict(self, example):
-        # Se só tiver uma classe no seu dataset, retorna essa classe
-        if self.pure():
-            return self.dataset.get_classes()[0]
-
         # Se dataset vazio, retorna None
-        if self.empty():
+        if self.dataset.empty():
             return None
+
+        # Se só tiver uma classe no seu dataset, retorna essa classe
+        if self.dataset.pure():
+            return self.dataset.get_classes()[0]
 
         # Manda a predição pros nodes filhos
         prediction = self.splitter.predict(example)
@@ -35,21 +34,8 @@ class Node:
         # no dataset
         if prediction is None:
             return self.dataset.major_class()
-
-    def pure(self):
-        """
-        Verifica se o dataset é puro. Ou seja, só possui uma classe nos seus exemplos
-
-        :return: true se o dataset possui apenas uma classe em todos os seus exemplos
-        """
-        return len(self.dataset.get_uniq_attr_values(self.attribute)) == 1
-
-    def empty(self):
-        """
-        Verifica se  o dataset está vazio
-        :return: retorna true se o dataset não possui exemplos
-        """
-        return self.dataset.size() == 0
+        else:
+            return prediction
 
     def __split(self):
         """
@@ -71,12 +57,13 @@ class Node:
         info gain máximo
         :return: nome do melhor atributo para este node
         """
+        if self.dataset.empty():
+            return ""
         attributes = self.__attributes_sample()
         attributes_info_gain = list(map(
             lambda attr: InfoGain(attr, self.dataset).value(),
             attributes
         ))
-        print(attributes, attributes_info_gain)
         index_of_max_info_gain = attributes_info_gain.index(np.max(attributes_info_gain))
         return attributes[index_of_max_info_gain]
 
@@ -136,16 +123,18 @@ class NumericSplitter:
         :return: lista com dois nodes.
         """
         divider = self.__mean()
-        first_dataset = []
-        second_dataset = []
-        for example in self.dataset.get_examples():
+        first_dataset_indexes = []
+        second_dataset_indexes = []
+        examples = self.dataset.get_examples()
+        for i in range(len(examples)):
+            example = examples[i]
             if example.get_attr_value(self.attr_name) <= divider:
-                first_dataset.append(example)
+                first_dataset_indexes.append(i)
             else:
-                second_dataset.append(example)
+                second_dataset_indexes.append(i)
         return [
-            Node(self.hyper_parameters, Dataset(first_dataset)),
-            Node(self.hyper_parameters, Dataset(second_dataset))
+            Node(self.hyper_parameters, self.dataset.subset(first_dataset_indexes)),
+            Node(self.hyper_parameters, self.dataset.subset(second_dataset_indexes))
         ]
 
     def __mean(self):
@@ -154,7 +143,6 @@ class NumericSplitter:
         :return: média dos valores do attributo no dataset
         """
         attr_values = self.dataset.get_attr_value(self.attr_name)
-        print(attr_values)
         return np.mean(attr_values)
 
 
@@ -168,7 +156,7 @@ class CategoricSplitter:
 
     def predict(self, example):
         example_attr_value = example.get_attr_value(self.attr_name)
-        node = self.nodes.index(self.possible_values[example_attr_value])
+        node = self.nodes[self.possible_values.index(example_attr_value)]
         return node.predict(example)
 
     def __get_nodes(self):
@@ -179,8 +167,4 @@ class CategoricSplitter:
         return nodes
 
     def __split_dataset_for(self, attr_value):
-        new_dataset = []
-        for example in self.dataset.get_examples():
-            if example.get_attr_value(self.attr_name) == attr_value:
-                new_dataset.append(example)
-        return Dataset(new_dataset)
+        return self.dataset.split_dataset_for(self.attr_name, attr_value)

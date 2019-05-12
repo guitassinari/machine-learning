@@ -1,6 +1,5 @@
 import random
 from models.DecisionTree import DecisionTree
-from sklearn.utils import resample
 from data.Dataset import Dataset
 
 
@@ -23,10 +22,7 @@ class Forest:
         # Cria todas as number_of_trees árvores de decisão
         for i in range(self.number_of_trees):
             # resampling usando bootstrap stratificado
-            sample_examples = resample(examples,
-                                       n_samples=sample_size,
-                                       stratify=classes)
-            tree_training_set = Dataset(sample_examples)
+            tree_training_set = self.training_set.resample(sample_size)
             tree = DecisionTree(hyper_parameters, tree_training_set)
             self.trees.append(tree)
 
@@ -49,4 +45,4 @@ class Forest:
         return major
 
     def __trees_predictions_for(self, example):
-        return map(lambda tree: tree.predict(example), self.trees)
+        return list(map(lambda tree: tree.predict(example), self.trees))
