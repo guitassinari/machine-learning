@@ -42,7 +42,7 @@ class Node:
 
         :return: true se o dataset possui apenas uma classe em todos os seus exemplos
         """
-        return len(self.dataset.get_uniq_attr_values()) == 1
+        return len(self.dataset.get_uniq_attr_values(self.attribute)) == 1
 
     def empty(self):
         """
@@ -76,8 +76,9 @@ class Node:
             lambda attr: InfoGain(attr, self.dataset).value(),
             attributes
         ))
-        print(attributes_info_gain)
-        return attributes.index(np.max(attributes_info_gain))
+        print(attributes, attributes_info_gain)
+        index_of_max_info_gain = attributes_info_gain.index(np.max(attributes_info_gain))
+        return attributes[index_of_max_info_gain]
 
     def __attributes_sample(self):
         """
@@ -96,9 +97,9 @@ class NodeSplitStrategy:
     @classmethod
     def for_type(cls, attr_type):
         if attr_type == AttributeType.CATEGORIC:
-            return NumericSplitter
-        else:
             return CategoricSplitter
+        else:
+            return NumericSplitter
 
 
 class NumericSplitter:
@@ -153,6 +154,7 @@ class NumericSplitter:
         :return: média dos valores do attributo no dataset
         """
         attr_values = self.dataset.get_attr_value(self.attr_name)
+        print(attr_values)
         return np.mean(attr_values)
 
 
@@ -169,7 +171,7 @@ class CategoricSplitter:
         node = self.nodes.index(self.possible_values[example_attr_value])
         return node.predict(example)
 
-    def get_nodes(self):
+    def __get_nodes(self):
         nodes = []
         for value in self.possible_values:
             split_dataset = self.__split_dataset_for(value)
