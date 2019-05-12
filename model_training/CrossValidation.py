@@ -9,7 +9,6 @@ class CrossValidation:
         self.model_klass = model_class
         self.divisor = StratifiedDivisor(dataset, n_divisions)
         self.divisions = n_divisions
-        pass
 
     def get_performance_indexes(self):
         performances = []

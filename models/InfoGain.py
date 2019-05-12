@@ -7,6 +7,7 @@ class InfoGain:
         self.attr_name = attr_name
 
     def value(self):
+
         dataset_entropy = Entropy(self.dataset)
         gain = dataset_entropy.total() - dataset_entropy.for_attribute(self.attr_name)
         return round(gain, 4)
@@ -20,6 +21,8 @@ class Entropy:
         _sum = 0
         for klass in self.dataset.get_uniq_classes():
             klass_prob = self.__probability_for(klass)
+            if klass_prob == 0:
+                continue
             _sum += klass_prob * math.log2(klass_prob)
         return -_sum
 
@@ -35,7 +38,4 @@ class Entropy:
 
     def __probability_for(self, klass):
         all_classes = self.dataset.get_classes()
-        prob = all_classes.count(klass) / len(all_classes)
-        if prob == 0:
-            raise Exception("Probability of class is 0")
-        return prob
+        return all_classes.count(klass) / len(all_classes)

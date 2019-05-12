@@ -15,8 +15,6 @@ class Forest:
         self.attr_sample_num = hyper_parameters["n_attr_sample"]
         self.trees = []
         self.training_set = training_set
-        classes = training_set.get_classes()
-        examples = training_set.get_examples()
         sample_size = round(training_set.size() / 3)
 
         # Cria todas as number_of_trees árvores de decisão

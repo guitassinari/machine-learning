@@ -2,7 +2,6 @@ import numpy as np
 import random
 from models.InfoGain import InfoGain
 from data.Attribute import AttributeType
-from data.Dataset import Dataset
 
 
 class Node:
@@ -57,8 +56,6 @@ class Node:
         info gain máximo
         :return: nome do melhor atributo para este node
         """
-        if self.dataset.empty():
-            return ""
         attributes = self.__attributes_sample()
         attributes_info_gain = list(map(
             lambda attr: InfoGain(attr, self.dataset).value(),
@@ -110,7 +107,7 @@ class NumericSplitter:
         """
         # se o valor do exemplo é <= ao divisor, retorna a predição do primeiro node
         # senão retorna a predição do segundo
-        if example.get_attr_value(self.attr_name) <= self.divider:
+        if self.__attr_value_for(example) <= self.divider:
             return self.nodes[0].predict(example)
         else:
             return self.nodes[1].predict(example)
@@ -128,7 +125,7 @@ class NumericSplitter:
         examples = self.dataset.get_examples()
         for i in range(len(examples)):
             example = examples[i]
-            if example.get_attr_value(self.attr_name) <= divider:
+            if self.__attr_value_for(example) <= divider:
                 first_dataset_indexes.append(i)
             else:
                 second_dataset_indexes.append(i)
@@ -139,11 +136,13 @@ class NumericSplitter:
 
     def __mean(self):
         """
-
         :return: média dos valores do attributo no dataset
         """
         attr_values = self.dataset.get_attr_value(self.attr_name)
-        return np.mean(attr_values)
+        return np.mean(list(map(lambda value: float(value), attr_values)))
+
+    def __attr_value_for(self, example):
+        return float(example.get_attr_value(self.attr_name))
 
 
 class CategoricSplitter:

@@ -127,7 +127,7 @@ class Dataset:
     def split_dataset_for(self, attr_name, attr_value):
         new_dataset = []
         examples = self.get_examples()
-        for i in range(len(self.get_examples())):
+        for i in range(len(examples)):
             example = examples[i]
             if example.get_attr_value(attr_name) == attr_value:
                 new_dataset.append(i)

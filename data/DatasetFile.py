@@ -4,19 +4,18 @@ from data.Example import Example
 
 
 class DatasetFile:
+    CLASS_AT = 0
+
     def __init__(self, file_path):
         self.file_path = file_path
 
     def read(self):
-        attr_names = None
         examples = []
         with open(self.file_path) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=';')
-            first_row = True
+            csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
-                if first_row:
-                    attr_names = row
-                    first_row = False
-                else:
-                    examples.append(Example(attr_names, row))
+                    klass = row[self.CLASS_AT]
+                    attributes = row.copy()
+                    del attributes[self.CLASS_AT]
+                    examples.append(Example(list(range(len(attributes))), attributes + [klass]))
         return Dataset(examples)
