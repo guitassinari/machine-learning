@@ -5,7 +5,7 @@ from data.Attribute import AttributeType
 
 
 class Node:
-    MAX_DEPTH = 5
+    MAX_DEPTH = 50
     """
     Essa classe repreenta um nodo da árvore de decisão
     """
@@ -169,8 +169,12 @@ class CategoricSplitter:
 
     def __get_nodes(self):
         nodes = []
+        if self.attr_name == 3:
+            print(self.possible_values)
         for value in self.possible_values:
             split_dataset = self.__split_dataset_for(value)
+            if self.attr_name == 3:
+                print(value, split_dataset.get_bodies())
             nodes.append(Node(self.hyper_parameters, split_dataset, self.depth+1))
         return nodes
 

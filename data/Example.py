@@ -17,6 +17,7 @@ class Example:
         :param attr_names: lista com nome de todos os atributos. O último é o nome da classe
         :param attr_values: lista com todos os valores dos atributos. O último é o valor da classe
         """
+        print(attr_values, attr_names)
         self.attr_names = attr_names
         self.attr_values = attr_values
 

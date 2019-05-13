@@ -1,6 +1,4 @@
-import random
 from models.DecisionTree import DecisionTree
-from data.Dataset import Dataset
 
 
 class Forest:

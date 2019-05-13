@@ -17,5 +17,5 @@ class DatasetFile:
                     klass = row[self.CLASS_AT]
                     attributes = row.copy()
                     del attributes[self.CLASS_AT]
-                    examples.append(Example(list(range(len(attributes))), attributes + [klass]))
+                    examples.append(Example(list(range(len(row))), attributes + [klass]))
         return Dataset(examples)
