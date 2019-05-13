@@ -30,9 +30,10 @@ class Entropy:
         possible_values = self.dataset.get_uniq_attr_values(attr_name)
         for value in possible_values:
             subset = self.dataset.split_dataset_for(attr_name, value)
-            subset_entropy = Entropy(self.dataset).total()
+            subset_entropy = Entropy(subset).total()
             subset_proportion = subset.size() / self.dataset.size()
             _sum += subset_proportion * subset_entropy
+        print(_sum)
         return _sum
 
     def __probability_for(self, klass):
