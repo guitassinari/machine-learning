@@ -4,7 +4,13 @@ from data.Example import Example
 
 
 class DatasetFile:
-    CLASS_AT = -1
+    """
+    Classe responsável por ler um arquivo csv contendo os dados de um dataset
+
+    A constante CLASS_AT define o indeice do atributo onde se encontra a classe
+    das instâncias, e deve ser alterado sempre que o dataset for trocado.
+    """
+    CLASS_AT = 1
 
     def __init__(self, file_path):
         self.file_path = file_path

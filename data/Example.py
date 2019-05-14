@@ -17,7 +17,6 @@ class Example:
         :param attr_names: lista com nome de todos os atributos. O último é o nome da classe
         :param attr_values: lista com todos os valores dos atributos. O último é o valor da classe
         """
-        print(attr_values, attr_names)
         self.attr_names = attr_names
         self.attr_values = attr_values
 
@@ -42,9 +41,19 @@ class Example:
         return self.attr_values[0:-1]
 
     def get_attr_names(self):
+        """
+        Retorna o nome de todos os atributos do exemplo
+        :return: nome de todos os atributos do exemplo
+        """
         return self.attr_names[0:-1].copy()
 
     def get_attr_type(self, attr_name):
+        """
+        Retorna o tipo de um atributo, podendo ser AttributeType.CATEGORIC ou
+        AttributeType.NUMERIC
+        :param attr_name: nome do atributo cujo tipo se deseja conseguir
+        :return: tipo do atributo
+        """
         value = self.get_attr_value(attr_name)
         try:
             float(value)
