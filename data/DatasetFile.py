@@ -10,7 +10,7 @@ class DatasetFile:
     A constante CLASS_AT define o indeice do atributo onde se encontra a classe
     das instâncias, e deve ser alterado sempre que o dataset for trocado.
     """
-    CLASS_AT = 1
+    CLASS_AT = 0
 
     def __init__(self, file_path):
         self.file_path = file_path

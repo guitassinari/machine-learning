@@ -11,6 +11,8 @@ class Dataset:
     """
     def __init__(self, examples, attr_names=None, possible_classes=None, attr_values=None):
         self.__major_class = None
+        self.__all_classes = None
+        self.__all_bodies = None
         self.examples = examples
         self.attr_names = attr_names or examples[0].get_attr_names()
         self.possible_classes = possible_classes or self.__uniq_classes()
@@ -27,7 +29,9 @@ class Dataset:
 
         ["sim", "nao", "sim", "sim", "nao"]
         """
-        return list(map(lambda example: example.get_class(), self.examples))
+        if self.__all_classes is None:
+            self.__all_classes = list(map(lambda example: example.get_class(), self.examples))
+        return self.__all_classes
 
     def get_bodies(self):
         """
@@ -42,7 +46,10 @@ class Dataset:
             {nome: "alice", idade: 99},
         ]
         """
-        return list(map(lambda example: example.get_body(), self.examples))
+        if self.__all_bodies is None:
+            self.__all_bodies = list(map(lambda example: example.get_body(), self.examples))
+
+        return self.__all_bodies
 
     def get_attr_value(self, attr_name):
         """

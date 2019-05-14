@@ -12,6 +12,7 @@
 
 """
 
+
 class ConfusionMatrix:
     BETA = 1
 

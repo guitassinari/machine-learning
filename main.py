@@ -6,6 +6,7 @@ from charts.LineChart import LineChart
 from data.DatasetFile import DatasetFile
 from data.HyperParametersFile import HyperParametersFile
 import sys
+import numpy as np
 import cProfile
 
 
@@ -23,13 +24,16 @@ def run():
     hyper_parameters_list = HyperParametersFile(hyper_parameters_file_path).read()
     cv = CrossValidation(hyper_parameters_list, Forest, cv_divisions, dataset)
 
-    best_hyper_parameter = cv.get_best_hyper_parameter()
+    performance_indexes = cv.get_performance_indexes()
+    best_hyper_parameter_index = performance_indexes.index(np.min(performance_indexes))
+    best_hyper_parameter = hyper_parameters_list[best_hyper_parameter_index]
     print(best_hyper_parameter)
 
-    LineChart([cv.get_performance_indexes()])
+    LineChart([performance_indexes])
     LineChart.show_charts()
 
     # Forest(hyper_parameters_list[0], dataset)
 
-cProfile.run("run()")
+# cProfile.run("run()")
 
+run()

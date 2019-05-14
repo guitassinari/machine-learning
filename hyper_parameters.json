@@ -3,11 +3,6 @@
     { "n_trees": 10, "n_attr_sample": 4 },
     { "n_trees": 20, "n_attr_sample": 4 },
     { "n_trees": 30, "n_attr_sample": 4 },
-    { "n_trees": 10, "n_attr_sample": 8 },
-    { "n_trees": 20, "n_attr_sample": 8 },
-    { "n_trees": 30, "n_attr_sample": 8 },
-    { "n_trees": 10, "n_attr_sample": 10 },
-    { "n_trees": 20, "n_attr_sample": 10 },
-    { "n_trees": 30, "n_attr_sample": 10 }
+    { "n_trees": 40, "n_attr_sample": 4 }
   ]
 }

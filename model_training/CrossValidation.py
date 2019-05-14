@@ -20,7 +20,7 @@ class CrossValidation:
 
     def get_best_hyper_parameter(self):
         performances = self.get_performance_indexes()
-        best_performance_index = performances.index(np.max(performances))
+        best_performance_index = performances.index(np.min(performances))
         return self.__hyper_parameters_at(best_performance_index)
 
     def __calculate_performance_for(self, hyper_parameters):
@@ -29,7 +29,7 @@ class CrossValidation:
             model = self.__create_model(hyper_parameters, division_version)
             performance_index = self.__model_performance_index(model, division_version)
             individual_performances.append(performance_index)
-        return np.mean(individual_performances)
+        return np.absolute(1 - np.mean(individual_performances))
 
     def __hyper_parameters_at(self, i):
         return self.hyper_parameters_options[i]
