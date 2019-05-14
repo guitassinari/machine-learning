@@ -5,7 +5,7 @@ from data.Attribute import AttributeType
 
 
 class Node:
-    MAX_DEPTH = 50
+    MAX_DEPTH = 20
     """
     Essa classe repreenta um nodo da árvore de decisão
     """
@@ -23,6 +23,11 @@ class Node:
             self.splitter = self.__split()
 
     def predict(self, example):
+        """
+        Prediz a classe de um exemplo baseado em seus atributos
+        :param example: exemplo que se deseja predizer a classe
+        :return: a predição de classe do exemplo
+        """
         # Se dataset vazio, retorna None
         if self.dataset.empty():
             return None
@@ -31,16 +36,14 @@ class Node:
         if self.dataset.pure():
             return self.dataset.get_example_at(0).get_class()
 
-        if self.splitter is None:
-            return self.dataset.major_class()
+        if self.splitter is not None:
+            # Manda a predição pros nodes filhos
+            prediction = self.splitter.predict(example)
 
-        # Manda a predição pros nodes filhos
-        prediction = self.splitter.predict(example)
-
-        # Se a predição de nodes filhos é nula, retorna a classe mais frequente
-        # no dataset
-        if prediction is not None:
-            return prediction
+            # Se a predição de nodes filhos é nula, retorna a classe mais frequente
+            # no dataset
+            if prediction is not None:
+                return prediction
 
         return self.dataset.major_class()
 
@@ -154,6 +157,9 @@ class NumericSplitter:
 
 
 class CategoricSplitter:
+    """
+    Divisor de node para atributos categóricos
+    """
     def __init__(self, hyper_parameters, dataset, attr_name, depth):
         self.depth = depth
         self.hyper_parameters = hyper_parameters
@@ -163,11 +169,21 @@ class CategoricSplitter:
         self.nodes = self.__get_nodes()
 
     def predict(self, example):
+        """
+        Testa qual node representa o valor do exemplo e retorna a predição dele
+
+        :param example: exemplo a ser predito
+        :return: classe predita para o exemplo
+        """
         example_attr_value = example.get_attr_value(self.attr_name)
         node = self.nodes[self.possible_values.index(example_attr_value)]
         return node.predict(example)
 
     def __get_nodes(self):
+        """
+        Realiza a divisão das suas classes em nodes filhos
+        :return: lista de nodes criados na divisão
+        """
         nodes = []
         if self.attr_name == 3:
             print(self.possible_values)
@@ -179,4 +195,10 @@ class CategoricSplitter:
         return nodes
 
     def __split_dataset_for(self, attr_value):
+        """
+        Calcula um subset contendo apenas exemplos cujos valores do atributo
+        self.attr_name seja attr_value
+        :param attr_value: valor para dividir o subset
+        :return: novo dataset contendo apenas os exemplos com o valor desejado
+        """
         return self.dataset.split_dataset_for(self.attr_name, attr_value)

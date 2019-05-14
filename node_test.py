@@ -1,11 +1,8 @@
 # coding: utf-8
 
 from data.DatasetFile import DatasetFile
-from data.HyperParametersFile import HyperParametersFile
 from models.Node import Node
-from data.Example import Example
 import copy
-from data.Dataset import Dataset
 
 names = ["Tempo", "Temperatura", "Umidade", "Ventoso", "Joga"]
 

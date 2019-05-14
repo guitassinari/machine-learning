@@ -24,8 +24,8 @@ class Forest:
 
     def predict(self, example):
         """
-        TODO: realizar um predict em todas as árvores e retornar por votação de maioria
-
+        Pede que todas as árvores façam uma predição para o exemplo e retorna
+        o valor mais retornado / frequente [votação]
         :param example: instância na forma de um Example para a qual se quer prever a classe
         :return: classe predita para o example
         """
