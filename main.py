@@ -14,12 +14,14 @@ def run():
     dataset_file_path = sys.argv[1]
     hyper_parameters_file_path = sys.argv[2]
     cv_divisions = int(sys.argv[3])
+    class_position = int(sys.argv[4])
 
     print("Dataset path:", dataset_file_path)
     print("Hyper parameters path:", hyper_parameters_file_path)
     print("Cross Validation K-Fold:", cv_divisions)
+    print("Class position: ", class_position)
 
-    dataset = DatasetFile(dataset_file_path).read()
+    dataset = DatasetFile(dataset_file_path, class_position).read()
 
     hyper_parameters_list = HyperParametersFile(hyper_parameters_file_path).read()
     cv = CrossValidation(hyper_parameters_list, Forest, cv_divisions, dataset)
