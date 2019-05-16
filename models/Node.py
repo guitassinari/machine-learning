@@ -32,10 +32,6 @@ class Node:
         if self.dataset.empty():
             return None
 
-        # Se só tiver uma classe no seu dataset, retorna essa classe
-        if self.dataset.pure():
-            return self.dataset.get_example_at(0).get_class()
-
         if self.splitter is not None:
             # Manda a predição pros nodes filhos
             prediction = self.splitter.predict(example)

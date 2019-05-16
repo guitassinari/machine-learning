@@ -10,6 +10,15 @@ import numpy as np
 import cProfile
 
 
+def print_tree(node, level=0):
+    if node.attribute is None:
+        return
+    string = (" " * level*4) + node.attribute
+    print(string)
+    if node.splitter:
+        for _node in node.splitter.nodes:
+            print_tree(_node, level+1)
+
 def run():
     dataset_file_path = sys.argv[1]
     hyper_parameters_file_path = sys.argv[2]
