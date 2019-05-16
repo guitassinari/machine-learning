@@ -31,13 +31,10 @@ print(node.predict(example))
 test_dataset = Dataset([
     Example([0,1,2,3,4], ["Ensolarado","Fria","Alta","Verdadeiro","Nao"]),
     Example([0,1,2,3,4], ["Nublado","Fria","Alta","Falso","Sim"]),
-    Example([0,1,2,3,4], ["Ensolarado","Quente","Alta","Verdadeiro","Talvez"]),
     Example([0,1,2,3,4], ["Chuvoso","Amena","Normal","Falso","Nao"]),
     Example([0,1,2,3,4], ["Chuvoso","Quente","Normal","Verdadeiro","Sim"]),
-    Example([0,1,2,3,4], ["Nublado","Amena","Alta","Verdadeiro","Talvez"]),
     Example([0,1,2,3,4], ["Nublado","Fria","Normal","Falso","Sim"]),
     Example([0,1,2,3,4], ["Chuvoso","Amena","Alta","Verdadeiro","Sim"]),
-    Example([0,1,2,3,4], ["Ensolarado","Amena","Normal","Verdadeiro","Talvez"])
 ])
 
 performance = ModelPerformance(node, test_dataset)
@@ -54,16 +51,13 @@ print(table.true_positives, table.false_positives)
 print(table.false_negatives, table.true_negatives)
 print(table.precision(), table.recall(), table.f_score())
 
-table = ConfusionMatrixToConfusionTable(matrix).confusion_table_for("Talvez")
-print(table.true_positives, table.false_positives)
-print(table.false_negatives, table.true_negatives)
-print(table.precision(), table.recall(), table.f_score())
-
 print(performance.f1_measure() / 2)
 
 predictions = list(map(lambda ex: node.predict(ex), test_dataset.examples))
 true = list(map(lambda ex: ex.get_class(), test_dataset.examples))
 
+print(predictions)
+print(true)
 print(f1_score(true, predictions, average='macro'))
 
 print_tree(node)

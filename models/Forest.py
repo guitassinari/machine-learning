@@ -10,10 +10,9 @@ class Forest:
         :param training_set: dataset de treinamento
         """
         self.number_of_trees = hyper_parameters["n_trees"]
-        self.attr_sample_num = hyper_parameters["n_attr_sample"]
         self.trees = []
         self.training_set = training_set
-        sample_size = round(training_set.size() / 3)
+        sample_size = round(2*training_set.size() / 3)
 
         # Cria todas as number_of_trees árvores de decisão
         for i in range(self.number_of_trees):
@@ -37,7 +36,7 @@ class Forest:
             if klass_frequency > max_frequency_so_far:
                 max_frequency_so_far = klass_frequency
                 major = klass
-
+        print(predictions, major)
         return major
 
     def __trees_predictions_for(self, example):

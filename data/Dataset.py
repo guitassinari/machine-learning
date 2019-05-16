@@ -215,8 +215,9 @@ class Dataset:
         :return: um dataset contendo os exemplos amostrados
         """
         examples = resample(self.examples,
-                                n_samples=sample_size,
-                                stratify=self.get_classes())
+                            n_samples=sample_size,
+                            random_state=0,
+                            replace=True)
         return Dataset(examples,
                        self.attr_names.copy(),
                        self.possible_classes.copy(),

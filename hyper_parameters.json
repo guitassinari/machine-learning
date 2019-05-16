@@ -1,8 +1,7 @@
 {
   "parameters": [
-    { "n_trees": 10, "n_attr_sample": 4 },
-    { "n_trees": 20, "n_attr_sample": 4 },
-    { "n_trees": 30, "n_attr_sample": 4 },
-    { "n_trees": 40, "n_attr_sample": 4 }
+    { "n_trees": 10, "n_attr_sample": 13, "max_depth": 15 },
+    { "n_trees": 50, "n_attr_sample": 13, "max_depth": 15 },
+    { "n_trees": 100, "n_attr_sample": 13, "max_depth": 15 }
   ]
 }

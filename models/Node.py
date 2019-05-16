@@ -5,12 +5,12 @@ from data.Attribute import AttributeType
 
 
 class Node:
-    MAX_DEPTH = 20
     """
     Essa classe repreenta um nodo da árvore de decisão
     """
 
     def __init__(self, hyper_parameters, dataset, depth=1):
+        self.MAX_DEPTH = hyper_parameters["max_depth"] or 15
         self.depth = depth
         self.hyper_parameters = hyper_parameters
         self.n_attr_sample = hyper_parameters["n_attr_sample"]

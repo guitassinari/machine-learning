@@ -11,10 +11,4 @@ Chuvoso,Amena,Normal,Falso,Sim
 Ensolarado,Amena,Normal,Verdadeiro,Sim
 Nublado,Amena,Alta,Verdadeiro,Sim
 Nublado,Quente,Normal,Falso,Sim
-Ensolarado,Amena,Alta,Falso,Talbez
-Nublado,Fria,Alta,Verdadeiro,Talvez
-Chuvoso,Quente,Normal,Falso,Talvez
-Nublado,Amena,Alta,Verdadeiro,Talvez
-Chuvoso,Quente,Normal,Verdadeiro,Talvez
-Ensolarado,Amena,Alta,Verdadeiro,Talvez
-Nublado,Fria,Alta,Falso,Talvez
+Chuvoso,Amena,Alta,Verdadeiro,Nao

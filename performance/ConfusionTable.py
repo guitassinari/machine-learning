@@ -11,7 +11,7 @@ class ConfusionTable:
         if self.precision() == 0: # evitar divisão por 0
             return 0
         return (
-            (1+self.BETA**2)*self.precision()
+            (1+self.BETA**2)*self.precision()*self.recall()
         )/(
             (self.BETA**2)*self.precision() + self.recall()
         )
