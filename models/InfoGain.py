@@ -12,7 +12,7 @@ class InfoGain:
         """
         dataset_entropy = Entropy(self.dataset)
         gain = dataset_entropy.total() - dataset_entropy.for_attribute(self.attr_name)
-        print(self.attr_name, gain)
+        print(self.attr_name," - ", gain)
         return round(gain, 4)
 
 
