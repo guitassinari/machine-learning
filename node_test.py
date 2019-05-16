@@ -15,7 +15,10 @@ names = ["Tempo", "Temperatura", "Umidade", "Ventoso", "Joga"]
 
 def print_tree(node, level=0):
     if node.attribute is None:
-        print((" " * (level+1)*4) + node.dataset.major_class())
+        if not node.dataset.empty():
+            print((" " * (level+1)*4) + node.dataset.major_class())
+        else:
+            print((" " * (level + 1) * 4) + "Dataset Vazio")
         return
     string = (" " * level*4) + names[node.attribute]
     print(string)
