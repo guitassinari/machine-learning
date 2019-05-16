@@ -81,7 +81,7 @@ de treinamento, validação e teste?
 ```
 
 
-Descrição do AUDIÂO kkkk
+Descrição do Primeiro audio. 
 
 Vamos receber um conjunto de treinamento Dataset de treinamento que vamos passar para a floresta, e aí essa floresta que é um conjunto de árvores de decisão, uma diferente da outra, que vão ser treinadas a partir de variações nesse dataSet que a gente pegou. Por exemplo: Eu tenho um dataSet com exemplos de 1 a 10, então eu passo para a árvore 1 o conjunto com o exemplo 2 repetido (1,2,3,4,5,6,7,8,9,2), para a árvore 2 com o exemplo 7 repedito (1,2,3,4,7,6,7,8,9,10)... alguma coisa assim... Então eu treino varias árvores diferentes e aí quando nós fomos tomar decisões a partir de um novo exemplo, a gente pega todas as decisões dessa nossa floresta de árvores e através de votação majoritária, ou seja, da árvore que nós der o valor maior, ou seja a decisão maior que for tomada pela maioria das árvores a gente seleciona.
 
