@@ -36,7 +36,6 @@ class Forest:
             if klass_frequency > max_frequency_so_far:
                 max_frequency_so_far = klass_frequency
                 major = klass
-        print(predictions, major)
         return major
 
     def __trees_predictions_for(self, example):
