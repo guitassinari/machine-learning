@@ -1,29 +1,40 @@
 # coding: utf-8
 
 from model_training.CrossValidation import CrossValidation
-from models.Forest import Forest
 from charts.LineChart import LineChart
 from data.DatasetFile import DatasetFile
 from data.HyperParametersFile import HyperParametersFile
-import sys
 import numpy as np
-import cProfile
+import argparse
+import importlib
 
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument("dataset", help="dataset file path")
+parser.add_argument("parameters", help="hyper parameters file path")
+parser.add_argument("-cv", dest="cross_validation_folds",
+                    help="number of cross validation folds",
+                    nargs=1,
+                    type=int)
+parser.add_argument("-cp", dest="class_position",
+                    help="class position inside dataset file, like an array index",
+                    default=-1,
+                    nargs=1,
+                    type=int)
+parser.add_argument("-model", dest="model_name",
+                    help="Model to be used. Can be either Forest or NeuralNetwork",
+                    nargs=1, default="Forest")
 
-def print_tree(node, level=0):
-    if node.attribute is None:
-        return
-    string = (" " * level*4) + node.attribute
-    print(string)
-    if node.splitter:
-        for _node in node.splitter.nodes:
-            print_tree(_node, level+1)
 
 def run():
-    dataset_file_path = sys.argv[1]
-    hyper_parameters_file_path = sys.argv[2]
-    cv_divisions = int(sys.argv[3])
-    class_position = int(sys.argv[4])
+    args = parser.parse_args()
+    dataset_file_path = args.dataset
+    hyper_parameters_file_path = args.parameters
+    cv_divisions = args.cross_validation_folds[0]
+    class_position = args.class_position[0]
+    
+    model_name = args.model_name[0]
+    module = importlib.import_module("models."+model_name)
+    model_class = getattr(module, model_name)
 
     print("Dataset path:", dataset_file_path)
     print("Hyper parameters path:", hyper_parameters_file_path)
@@ -33,7 +44,7 @@ def run():
     dataset = DatasetFile(dataset_file_path, class_position).read()
 
     hyper_parameters_list = HyperParametersFile(hyper_parameters_file_path).read()
-    cv = CrossValidation(hyper_parameters_list, Forest, cv_divisions, dataset)
+    cv = CrossValidation(hyper_parameters_list, model_class, cv_divisions, dataset)
 
     performance_indexes = cv.get_performance_indexes()
     best_hyper_parameter_index = performance_indexes.index(np.min(performance_indexes))
@@ -43,8 +54,5 @@ def run():
     LineChart([performance_indexes])
     LineChart.show_charts()
 
-    # Forest(hyper_parameters_list[0], dataset)
-
-# cProfile.run("run()")
 
 run()
