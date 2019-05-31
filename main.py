@@ -1,5 +1,6 @@
 # coding: utf-8
 
+
 from model_training.CrossValidation import CrossValidation
 from charts.LineChart import LineChart
 from data.DatasetFile import DatasetFile
@@ -31,7 +32,7 @@ def run():
     hyper_parameters_file_path = args.parameters
     cv_divisions = args.cross_validation_folds[0]
     class_position = args.class_position[0]
-    
+
     model_name = args.model_name[0]
     module = importlib.import_module("models."+model_name)
     model_class = getattr(module, model_name)
