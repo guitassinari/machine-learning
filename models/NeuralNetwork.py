@@ -2,10 +2,11 @@
 
 import math
 import numpy as np
+from models.InitialWeights import InitialWeights
 
 
 class NeuralNetwork:
-    def __init__(self, n_inputs=1, n_outputs=1, n_hidden_layers=0, layers_n_neurons=[]):
+    def __init__(self, n_inputs=1, n_outputs=1, n_hidden_layers=0, layers_n_neurons=[], debug=False):
         self.n_layers = n_hidden_layers + 2
         self.weight_matrices = []
         layer_neurons = [n_inputs] + layers_n_neurons + [n_outputs]
@@ -14,7 +15,9 @@ class NeuralNetwork:
                 continue
             previous_n_neurons = layer_neurons[layer - 1]
             n_neurons = layer_neurons[layer]
-            weights = np.random.random((previous_n_neurons, n_neurons))
+            weights = InitialWeights.generate(previous_n_neurons,
+                                              n_neurons,
+                                              debug=debug)
             self.weight_matrices.append(np.array(weights))
         print(self.weight_matrices)
 

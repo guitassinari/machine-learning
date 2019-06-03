@@ -25,5 +25,6 @@ def test_prediction():
     nn = NeuralNetwork(n_inputs=inputs,
                        n_outputs=outputs,
                        n_hidden_layers=n_hidden_layers,
-                       layers_n_neurons=[n_layer_neuron])
-    assert nn.predict([1]) == [1]
+                       layers_n_neurons=[n_layer_neuron],
+                       debug=True)
+    assert nn.predict([1]) == [3]
