@@ -3,8 +3,27 @@
 from models.NeuralNetwork import NeuralNetwork
 
 def test_weight_matrices():
-    nn = NeuralNetwork(n_inputs=1,
-                       n_outputs=1,
-                       n_hidden_layers=1,
-                       layers_n_neurons=[3])
-    assert len(nn.weight_matrices) == 2
+    n_hidden_layers = 1
+    inputs = 1
+    outputs = 1
+    n_layer_neuron = 3
+    nn = NeuralNetwork(n_inputs=inputs,
+                       n_outputs=outputs,
+                       n_hidden_layers=n_hidden_layers,
+                       layers_n_neurons=[n_layer_neuron])
+    assert len(nn.weight_matrices) == n_hidden_layers + 1
+    assert len(nn.weight_matrices[0]) == inputs
+    assert len(nn.weight_matrices[1]) == n_layer_neuron
+    assert len(nn.weight_matrices[0][0]) == n_layer_neuron
+    assert len(nn.weight_matrices[1][0]) == outputs
+
+def test_prediction():
+    n_hidden_layers = 1
+    inputs = 1
+    outputs = 1
+    n_layer_neuron = 3
+    nn = NeuralNetwork(n_inputs=inputs,
+                       n_outputs=outputs,
+                       n_hidden_layers=n_hidden_layers,
+                       layers_n_neurons=[n_layer_neuron])
+    assert nn.predict([1]) == [1]
