@@ -28,13 +28,12 @@ class NeuralNetwork:
         :return:
         """
         accumulator = np.array(features)
-        for layer in range(self.n_layers - 1):
-            weights = self.weight_matrices[layer]
+        for weights in self.weight_matrices:
             accumulator = accumulator.dot(weights)
-        return list(accumulator)
+        return list(self.sigmoid(accumulator))
 
     def sigmoid(self, x):
-        return 1 / (1 + math.exp(-x))
+        return 1. / (1. + np.exp(-x))
 
     def delta(self, deltas=[]):
         pass

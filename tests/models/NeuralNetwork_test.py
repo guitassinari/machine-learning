@@ -27,4 +27,4 @@ def test_prediction():
                        n_hidden_layers=n_hidden_layers,
                        layers_n_neurons=[n_layer_neuron],
                        debug=True)
-    assert nn.predict([1]) == [3]
+    assert nn.predict([1]) == [0.9525741268224334]
