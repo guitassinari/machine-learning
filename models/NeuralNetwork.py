@@ -5,11 +5,11 @@ from models.InitialWeights import InitialWeights
 
 
 class NeuralNetwork:
-    def __init__(self, n_inputs=1, n_outputs=1, n_hidden_layers=0, layers_n_neurons=[], debug=False):
-        self.n_layers = n_hidden_layers + 2
+    def __init__(self, layers_n_neurons=[], debug=False):
+        self.n_layers = len(layers_n_neurons)
         self.weight_matrices = []
         self.bias_weights_matrices = []
-        layer_neurons = [n_inputs] + layers_n_neurons + [n_outputs]
+        layer_neurons = layers_n_neurons
         for layer in range(self.n_layers):
             if layer == 0:
                 continue
@@ -38,7 +38,6 @@ class NeuralNetwork:
         accumulator = np.array(acc)
         weights = self.weight_matrices[layer]
         bias = self.bias_weights_matrices[layer]
-        print(accumulator, weights, bias)
         return np.add(accumulator.dot(weights), bias)
 
     def sigmoid(self, x):
