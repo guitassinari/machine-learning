@@ -2,6 +2,7 @@
 
 import numpy as np
 from models.InitialWeights import InitialWeights
+from models.NeuralNetworkMath import NeuralNetworkMath
 
 
 class NeuralNetwork:
@@ -27,12 +28,15 @@ class NeuralNetwork:
         :param features:
         :return:
         """
+        return NeuralNetworkMath.sigmoid(self.outputs(features)).tolist()
+
+    def outputs(self, features=[]):
         accumulator = np.array(features)
         # Multiplica todas as matrizes, (entrada x pesos) + bias.
         # Forward propagation
         for layer_i in range(len(self.weight_matrices)):
             accumulator = self.hidden_activation(accumulator, layer_i)
-        return self.sigmoid(accumulator).tolist()
+        return accumulator
 
     def hidden_activation(self, acc=[], layer=0):
         accumulator = np.array(acc)
@@ -40,8 +44,17 @@ class NeuralNetwork:
         bias = self.bias_weights_matrices[layer]
         return np.add(accumulator.dot(weights), bias)
 
-    def sigmoid(self, x):
-        return 1. / (1. + np.exp(-x))
+    def train(self, training_dataset, _lambda=0.1):
+        loss = 0
+        for example in training_dataset.get_examples():
+            # Isso tá incompleto. Ver a função NeuralNetworkMath.loss
+            loss += NeuralNetworkMath.loss(self.outputs(example.get_body()))
+        n_examples = len(training_dataset.examples)
+        loss = loss / n_examples
+        regularization = NeuralNetworkMath.regularization(self.weight_matrices,
+                                                          _lambda=_lambda,
+                                                          n_examples=n_examples)
+        return loss + regularization
 
     def delta(self, deltas=[]):
         pass
