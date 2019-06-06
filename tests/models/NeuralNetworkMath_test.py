@@ -27,3 +27,10 @@ def test_delta():
     next_deltas = [1, 1]
     deltas = NeuralNetworkMath.delta(activations, weights, next_deltas)
     assert all([a == b for a, b in zip(deltas, [.5, .5, .5])])
+
+
+def test_output_delta():
+    real_output = [0, 1, 0]
+    expected_output = [1, 0, 0]
+    deltas = NeuralNetworkMath.output_delta(real_output, expected_output)
+    assert all([a == b for a, b in zip(deltas, [-1, 1, 0])])
