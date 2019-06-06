@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from models.NeuralNetwork import NeuralNetwork
+from models.NeuralNetworkMath import NeuralNetworkMath
 
 
 def test_weight_matrices():
@@ -22,7 +23,7 @@ def test_prediction():
     nn = NeuralNetwork(layers_n_neurons=[inputs, hidden_layer_neurons, outputs],
                        debug=True)
     first_line = nn.predict([1])[0]
-    assert first_line == [0.9990889488055994]
+    assert first_line == [0.9744787489988975]
 
 
 def test_hidden_activations():
@@ -32,4 +33,7 @@ def test_hidden_activations():
     nn = NeuralNetwork(layers_n_neurons=[inputs, hidden_layer_neurons, outputs],
                        debug=True)
     first_line = nn.hidden_activation([1])[0]
-    assert all([a == b for a, b in zip(first_line, [2, 2, 2])])
+    expected_result = NeuralNetworkMath.sigmoid(2)
+    expected_line = [expected_result, expected_result, expected_result]
+    print(first_line, expected_line)
+    assert all([a == b for a, b in zip(first_line, expected_line)])

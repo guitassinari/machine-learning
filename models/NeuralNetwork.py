@@ -28,10 +28,10 @@ class NeuralNetwork:
         :param features:
         :return:
         """
-        return NeuralNetworkMath.sigmoid(self.outputs(features)).tolist()
+        return self.outputs(features).tolist()
 
     def outputs(self, features=[]):
-        accumulator = np.array(features)
+        accumulator = features
         # Multiplica todas as matrizes, (entrada x pesos) + bias.
         # Forward propagation
         for layer_i in range(len(self.weight_matrices)):
@@ -42,7 +42,8 @@ class NeuralNetwork:
         accumulator = np.array(acc)
         weights = self.weight_matrices[layer]
         bias = self.bias_weights_matrices[layer]
-        return np.add(accumulator.dot(weights), bias)
+        zs = np.add(accumulator.dot(weights), bias)
+        return NeuralNetworkMath.sigmoid(zs)
 
     def train(self, training_dataset, _lambda=0.1):
         loss = 0
