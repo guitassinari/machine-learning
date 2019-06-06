@@ -18,3 +18,12 @@ def test_regularization():
     assert NeuralNetworkMath.loss_regularization(weights,
                                                  _lambda=_lambda,
                                                  n_examples=n_samples) == 10.5
+
+
+def test_delta():
+    weights = [[1, 1, 1],
+               [1, 1, 1]]
+    activations = [.5, .5, .5]
+    next_deltas = [1, 1]
+    deltas = NeuralNetworkMath.delta(activations, weights, next_deltas)
+    assert all([a == b for a, b in zip(deltas, [.5, .5, .5])])

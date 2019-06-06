@@ -41,3 +41,17 @@ class NeuralNetworkMath:
     def gradient(cls):
         pass
 
+    @classmethod
+    def output_delta(cls, output=[], expected_output=[]):
+        return np.subtract(output, expected_output)
+
+    @classmethod
+    def delta(cls, activations=[], weights=[], next_layer_deltas=[]):
+        np_activations = np.array(activations)
+        np_weights = np.array(weights)
+        np_deltas = np.array(next_layer_deltas)
+        weighted_deltas = np_weights.transpose().dot(np_deltas)
+        one_sub_activations = np.subtract(1, np_activations)
+        wtf_activation = np.multiply(one_sub_activations, np_activations)
+        return np.multiply(weighted_deltas, wtf_activation)
+
