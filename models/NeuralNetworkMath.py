@@ -26,10 +26,18 @@ class NeuralNetworkMath:
         return -sum(multiplied)
 
     @classmethod
-    def regularization(cls, weights_matrices=[], _lambda=0.1, n_examples=1):
+    def loss_regularization(cls, weights_matrices=[], _lambda=0.1, n_examples=1):
         regularization = 0
         for weights in weights_matrices:
             regularization += np.sum(np.square(weights))
         regularization = (_lambda / (2 * n_examples)) * regularization
         return regularization
+
+    @classmethod
+    def gradient_regularization(cls):
+        pass
+
+    @classmethod
+    def gradient(cls):
+        pass
 

@@ -6,7 +6,9 @@ from models.NeuralNetworkMath import NeuralNetworkMath
 
 
 class NeuralNetwork:
-    def __init__(self, layers_n_neurons=[], debug=False):
+    def __init__(self, hyper_parameters, training_set, debug=False):
+        self.training_set = training_set
+        layers_n_neurons = hyper_parameters["layers_structure"]
         self.n_layers = len(layers_n_neurons)
         self.weight_matrices = []
         self.bias_weights_matrices = []
@@ -52,9 +54,9 @@ class NeuralNetwork:
             loss += NeuralNetworkMath.loss(self.outputs(example.get_body()))
         n_examples = len(training_dataset.examples)
         loss = loss / n_examples
-        regularization = NeuralNetworkMath.regularization(self.weight_matrices,
-                                                          _lambda=_lambda,
-                                                          n_examples=n_examples)
+        regularization = NeuralNetworkMath.loss_regularization(self.weight_matrices,
+                                                               _lambda=_lambda,
+                                                               n_examples=n_examples)
         return loss + regularization
 
     def delta(self, deltas=[]):

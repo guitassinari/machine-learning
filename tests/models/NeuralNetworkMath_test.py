@@ -15,6 +15,6 @@ def test_regularization():
                 [1, 2, 3]]]
     _lambda = 1
     n_samples = 2
-    assert NeuralNetworkMath.regularization(weights,
-                                            _lambda=_lambda,
-                                            n_examples=n_samples) == 10.5
+    assert NeuralNetworkMath.loss_regularization(weights,
+                                                 _lambda=_lambda,
+                                                 n_examples=n_samples) == 10.5

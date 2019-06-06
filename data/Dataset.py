@@ -14,10 +14,14 @@ class Dataset:
         self.__all_classes = None
         self.__all_bodies = None
         self.examples = examples
-        self.attr_names = attr_names or examples[0].get_attr_names()
         self.possible_classes = possible_classes or self.__uniq_classes()
-        self.attr_values = attr_values or\
+        if len(examples) > 0:
+            self.attr_names = attr_names or examples[0].get_attr_names()
+            self.attr_values = attr_values or\
                            list(map(lambda attr_name: self.__get_uniq_attr_values_from_examples(attr_name), self.attr_names))
+        else:
+            self.attr_names = []
+            self.attr_values = []
 
     def get_classes(self):
         """
