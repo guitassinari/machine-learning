@@ -47,7 +47,7 @@ class NeuralNetwork:
         return activations
 
     def back_propagate(self, expected_outputs=[]):
-        for layer in reversed(range(self.n_layers)):  #ate criterio de parada??
+        for layer in reversed(range(self.n_layers)):  # ate criterio de parada?
             if layer == self.last_layer_index():
                 deltas = self.outputs(expected_outputs)
             else:
@@ -57,21 +57,23 @@ class NeuralNetwork:
                 deltas = NeuralNetworkMath.delta(activations,
                                                  weights,
                                                  next_layer_deltas)
-                #acumula em D(l=k) os gradientes com base no exemplo atual
-                #fara isso para cada camada
+                # acumula em D(l=k) os gradientes com base no exemplo atual
+                # fara isso para cada camada
                 gradients = NeuralNetworkMath.gradient(activations,
                                                        next_layer_deltas)
                 # aplica regularização alpha a apenas a pesos não bias
-                gradients_reg = NeuralNetworkMath.gradient_regularization(_lambda,
-                                                                weights_matrices)
+                gradients_reg = NeuralNetworkMath.gradient_regularization(self._lambda,
+                                                                weights)
                 # combina gradientes com regularização;
                 # divide por #exemplos para calcular gradiente médio
                 regularized_gradients = (1/n_examples) * (gradients + gradients_reg)
                 # atualiza pesos de cada camada com base nos gradientes
-                weights = weights - (alpha * regularized_gradients)
+                for weight in weights:
+                    weights = weights - (alpha * regularized_gradients)
 
+            # atualiza cada camada da rede
             self.deltas[layer] = deltas
-            self.weight_matrices[] = weights
+            self.weight_matrices[layer] = weights
 
     def output_deltas(self, output_matrix=[[]]):
         outputs = self.last_activations[self.last_layer_index()]
