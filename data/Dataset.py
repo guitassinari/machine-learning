@@ -127,8 +127,8 @@ class Dataset:
         Type: Array of [Example]
         Exemplo:
         [
-            Example(nome: "junior", idade: 2, joga: "sim"),
-            Example(nome: "sandy", idade: 5, joga: "nao"),
+            [1]Example(nome: "junior", idade: 2, joga: "sim"),
+            [2]Example(nome: "sandy", idade: 5, joga: "nao"),
         ]
         """
         return self.examples.copy()
@@ -258,3 +258,47 @@ class Dataset:
         :return: o exemplo desejado
         """
         return self.examples[index]
+
+    def data_normalization_math(example_instance, max, min):
+        """
+        fornecendo o valor atual do exemplo, o máximo e o mínimo de certo atri,
+        calcula o novo valor para o exemplo do atributo fornecido
+        """
+        new_example = (2*((example_instance - min) / (max - min)))-1
+        return new_example
+
+    def data_normalization(num_of_atrr):
+        """
+        Realiza a normalização dos dados do dataset
+        """
+        # tu vai ter que saber quantos atributos sao???
+        # se forem oito no caso. Entao tu cria um vetor
+        # com oito posicoes para salvar
+        start = 0
+        vector_max = [num_of_atrr]
+        vector_min = [num_of_atrr]
+        # linha abaixo estava informando SELF nao declado mas...
+        all_examples = self.get_examples() #todos atributos
+        for row in all_examples:
+            example = self.get_example_at(row) # uma linha do dataset
+            # Falta tratar para todos os casos "," ";"???
+            example_split = example.split()
+            if start == 0:
+                #split-> cada elemento em uma posicao
+                vector_max = example.split()
+                vector_min = example.split()
+                start = 1
+            for column in example_split:
+                if example_split[column] > vector_max[column]:
+                    vector_max[column] = example_split[column]
+                elif example_split[column] < vector_min[column]:
+                    vector_min[column] = example_split[column]
+        for row in all_examples:
+            example = self.get_example_at(row) # uma linha do dataset
+            example_split = example.split()
+            for column in example_split:
+                new_example = self.data_normalization_math(example_split[column],
+                                        vector_max[column], vector_min[column])
+                example_split[column] = new_example
+        self.examples = all_examples
+        return example
