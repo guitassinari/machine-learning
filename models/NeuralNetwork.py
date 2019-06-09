@@ -66,7 +66,7 @@ class NeuralNetwork:
                                                                 weights)
                 # combina gradientes com regularização;
                 # divide por #exemplos para calcular gradiente médio
-                regularized_gradients = (1/n_examples) * (gradients + gradients_reg)
+                regularized_gradients = (1/len(self.training_set.examples)) * (gradients + gradients_reg)
                 # atualiza pesos de cada camada com base nos gradientes
                 for weight in weights:
                     weights = weights - (alpha * regularized_gradients)

@@ -1,5 +1,5 @@
 from sklearn.utils import resample
-
+import numpy as np
 
 class Dataset:
     """Classe que engloba um Dataset (lista de instâncias / Examples)
@@ -259,7 +259,7 @@ class Dataset:
         """
         return self.examples[index]
 
-    def data_normalization_math(example_instance, max, min):
+    def data_normalization_math(self, example_instance, max, min):
         """
         fornecendo o valor atual do exemplo, o máximo e o mínimo de certo atri,
         calcula o novo valor para o exemplo do atributo fornecido
@@ -267,38 +267,35 @@ class Dataset:
         new_example = (2*((example_instance - min) / (max - min)))-1
         return new_example
 
-    def data_normalization(num_of_atrr):
+    def data_normalization(self, num_of_atrr):
         """
         Realiza a normalização dos dados do dataset
         """
         # tu vai ter que saber quantos atributos sao???
         # se forem oito no caso. Entao tu cria um vetor
         # com oito posicoes para salvar
-        start = 0
-        vector_max = [num_of_atrr]
-        vector_min = [num_of_atrr]
-        # linha abaixo estava informando SELF nao declado mas...
-        all_examples = self.get_examples() #todos atributos
-        for row in all_examples:
-            example = self.get_example_at(row) # uma linha do dataset
-            # Falta tratar para todos os casos "," ";"???
-            example_split = example.split()
-            if start == 0:
-                #split-> cada elemento em uma posicao
-                vector_max = example.split()
-                vector_min = example.split()
-                start = 1
-            for column in example_split:
-                if example_split[column] > vector_max[column]:
-                    vector_max[column] = example_split[column]
-                elif example_split[column] < vector_min[column]:
-                    vector_min[column] = example_split[column]
-        for row in all_examples:
-            example = self.get_example_at(row) # uma linha do dataset
+        all_examples = self.get_examples()
+
+        """
+        Cria uma matriz onde cada linha é um exemplo, e cada coluna é o valor
+        de um atributo
+        """
+
+        attributes_matrix = map(lambda example: example.get_body(), all_examples)
+
+        """
+        valor mínimo e máximo de cada coluna da matriz, ou seja, o valor
+        mínimo/máximo de cada atributo
+        """
+        vector_min = np.amin(attributes_matrix, axis=0)
+        vector_max = np.amax(attributes_matrix, axis=0)
+
+        for example in all_examples:
             example_split = example.split()
             for column in example_split:
                 new_example = self.data_normalization_math(example_split[column],
-                                        vector_max[column], vector_min[column])
+                                                           vector_max[column],
+                                                           vector_min[column])
                 example_split[column] = new_example
         self.examples = all_examples
         return example
