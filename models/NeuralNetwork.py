@@ -119,15 +119,26 @@ class NeuralNetwork:
 # efetuar a verificação numérica do gradiente,
 # a fim de checar a corretude da implementação de cada grupo;
 
-    def numerical_verifier(epsilon, weights_matrices=[], gradients=[], iterator, expected_outputs=[]):
+'''
+funcionalidade que permita, via linha de comando,
+informar a sua implementação a estrutura de uma rede de
+teste (i.e., estrutura de camadas/neurônios, pesos iniciais, e fator de
+regularização), e um conjunto de treinamento, e que retorne o gradiente calculado para cada
+peso;
+'''
+    def numerical_verifier(epsilon, weights_matrices=[], gradients=[], expected_outputs=[]):
         numerical_grad = 0
         for index in weights_matrices:
-            weights_minus = weights_matrices[:]
+            weights_minus = weights_matrices[:]  # coloa a matrix inteira para variavel
             weights_plus = weights_matrices[:]
 
             weights_minus[index] -= epsilon
             weights_plus[index] += epsilon
-            numerical_grad = (loss(weights_plus, expected_outputs) - loss(weights_minus, expected_outputs)) / 2*epsilon
-            if not np.isclose(gradients, numerical_grad)
-                print("Gradient not comparable.")
+            numerical_grad = (loss(weights_plus, expected_outputs) - loss(weights_minus, expected_outputs)) / (2*epsilon)
+            # Ideia aqui e printar duas colunas lado a lado
+            # A primeira sera o valor calculado pela rede
+            # A segunda o valor aproximado numericamente
+
+            # Se der tempo vamos mostrar graficamente o diferenca
+            print("Gradients: " gradients[row,col], numerical_grad[row,col])
         return
