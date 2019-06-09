@@ -111,13 +111,19 @@ class NeuralNetwork:
 
     def array_to_matrix(self, array=[]):
         return list(map(lambda inp: [inp], array))
-# j(T1 -epsilon)- j(t1+epsilon)
-# _____________________________
-#        2*epsilon
+# J(T1 -epsilon, T2,...) - J(t1+epsilon, T2,...)
+# _______________________________________________
+#                   2*epsilon
+
+# funcionalidade que permita, via linha de comando, efetuar a verificação numérica do gradiente,
+# a fim de checar a corretude da implementação de cada grupo;
 
     def numerical_verifier(epsilon, weights_matrices=[], gradients=[], iterator, expected_outputs=[]):
         numerical_grad = 0
         for index in weights_matrices
+            weights_minus = weights_matrices[:]
+            weights_plus = weights_matrices[:]
+
             weights_minus[index] -= epsilon
             weights_plus[index] += epsilon
             numerical_grad = (loss(weights_plus, expected_outputs) - loss(weights_minus, expected_outputs)) / 2*epsilon
