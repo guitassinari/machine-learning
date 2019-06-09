@@ -111,3 +111,16 @@ class NeuralNetwork:
 
     def array_to_matrix(self, array=[]):
         return list(map(lambda inp: [inp], array))
+# j(T1 -epsilon)- j(t1+epsilon)
+# _____________________________
+#        2*epsilon
+
+    def numerical_verifier(epsilon, weights_matrices=[], gradients=[], iterator, expected_outputs=[]):
+        numerical_grad = 0
+        for index in weights_matrices
+            weights_minus[index] -= epsilon
+            weights_plus[index] += epsilon
+            numerical_grad = (loss(weights_plus, expected_outputs) - loss(weights_minus, expected_outputs)) / 2*epsilon
+            if not np.isclose(gradients, numerical_grad)
+                print("Gradient not comparable.")
+        return
