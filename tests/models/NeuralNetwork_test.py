@@ -15,6 +15,7 @@ parameters = {
     "lambda": 0.1
 }
 
+
 def test_weight_matrices():
     nn = NeuralNetwork(parameters, dataset, debug=True)
     assert len(nn.weight_matrices) == 2  # input -> hidden, hidden -> output

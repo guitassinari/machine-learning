@@ -59,8 +59,8 @@ class NeuralNetwork:
                                                  next_layer_deltas)
                 # acumula em D(l=k) os gradientes com base no exemplo atual
                 # fara isso para cada camada
-                gradients = NeuralNetworkMath.gradient(activations,
-                                                       next_layer_deltas)
+                gradients = NeuralNetworkMath.all_gradients(activations,
+                                                            next_layer_deltas)
                 # aplica regularização alpha a apenas a pesos não bias
                 gradients_reg = NeuralNetworkMath.gradient_regularization(self._lambda,
                                                                 weights)

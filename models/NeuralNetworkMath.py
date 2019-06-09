@@ -42,12 +42,20 @@ class NeuralNetworkMath:
         return grad_regularization
 
     @classmethod
-    def gradient(cls, activations=[], next_layer_deltas=[]):
-        gradient = []
-        for activation in activations:
-            transposed_activation = activation.transpose()
-            gradient.append(np.matmul(next_layer_deltas, transposed_activation))
-        return gradient
+    def all_gradients(cls, activations_matrices=[], deltas_matrices=[]):
+        gradients = []
+        for index in range(len(activations_matrices)):
+            activation_matrix = activations_matrices[index]
+            delta_matrix = deltas_matrices[index]
+            gradients.append(cls.gradient(activation_matrix, delta_matrix))
+        return gradients
+
+
+    @classmethod
+    def gradient(cls, activations_matrix=[], next_layer_deltas_matrix=[]):
+        transposed_activation = np.array(activations_matrix).transpose()
+        deltas_matrix = np.array(next_layer_deltas_matrix)
+        return np.multiply(deltas_matrix, transposed_activation).tolist()
 
     @classmethod
     def output_delta(cls, output=[], expected_output=[]):
