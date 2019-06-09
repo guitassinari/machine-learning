@@ -115,12 +115,13 @@ class NeuralNetwork:
 # _______________________________________________
 #                   2*epsilon
 
-# funcionalidade que permita, via linha de comando, efetuar a verificação numérica do gradiente,
+# funcionalidade que permita, via linha de comando,
+# efetuar a verificação numérica do gradiente,
 # a fim de checar a corretude da implementação de cada grupo;
 
     def numerical_verifier(epsilon, weights_matrices=[], gradients=[], iterator, expected_outputs=[]):
         numerical_grad = 0
-        for index in weights_matrices
+        for index in weights_matrices:
             weights_minus = weights_matrices[:]
             weights_plus = weights_matrices[:]
 
