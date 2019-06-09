@@ -36,3 +36,11 @@ pip3 install matplotlib
 ### Estrutura
 
 #### Passo a passo
+
+
+
+Itens:
+
+
+(ok) Propagação da entrada
+() backpropagation

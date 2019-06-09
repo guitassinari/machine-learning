@@ -46,7 +46,7 @@ class NeuralNetworkMath:
         gradient = []
         for activation in activations:
             transposed_activation = activation.transpose()
-            gradient.append(np.matmul(next_layer_deltas, activations_transpose))
+            gradient.append(np.matmul(next_layer_deltas, transposed_activation))
         return gradient
 
     @classmethod
