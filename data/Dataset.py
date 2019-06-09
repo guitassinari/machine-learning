@@ -267,31 +267,28 @@ class Dataset:
         new_example = (2*((example_instance - min) / (max - min)))-1
         return new_example
 
-    def data_normalization(self):
+    def data_normalization(self, num_of_atrr):
         """
         Realiza a normalização dos dados do dataset
         """
         # tu vai ter que saber quantos atributos sao???
         # se forem oito no caso. Entao tu cria um vetor
         # com oito posicoes para salvar
-        column = 0
         all_examples = self.get_examples()
 
         """
-        Cria uma matriz onde cada linha é um exemplo,
-         e cada coluna é o valor
+        Cria uma matriz onde cada linha é um exemplo, e cada coluna é o valor
         de um atributo
         """
 
-        attributes_matrix = map(lambda ex: ex.get_body(),
-                                all_examples)
+        attributes_matrix = map(lambda example: example.get_body(), all_examples)
 
         """
         valor mínimo e máximo de cada coluna da matriz, ou seja, o valor
         mínimo/máximo de cada atributo
         """
-        vector_min = np.amin(attributes_matrix, axis=column)
-        vector_max = np.amax(attributes_matrix, axis=column)
+        vector_min = np.amin(attributes_matrix, axis=0)
+        vector_max = np.amax(attributes_matrix, axis=0)
 
         for example in all_examples:
             example_split = example.split()
