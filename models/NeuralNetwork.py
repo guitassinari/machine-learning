@@ -167,5 +167,5 @@ class NeuralNetwork:
         weight_moments[iterator] = (momentum_term * weight_moments) + gradients
 
         return
-    def update_momentum(self, alpha, iterator, weights_matrices=[], weights_moments=[]):
-        return weights_matrices[iterator] - (alpha * weights_moments[iterator])
+    def update_momentum(self, iterator, weights_matrices=[], weights_moments=[]):
+        return weights_matrices[iterator] - (self.alpha * weights_moments[iterator])
