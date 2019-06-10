@@ -156,3 +156,9 @@ peso;
             # Se der tempo vamos mostrar graficamente o diferenca
             print("Gradients: " gradients[row,col], numerical_grad[row,col])
         return
+
+    def momentum(inputs=[], expected_outputs=[], alpha, weights_matrices=[], weight_moments=[], gradients=[], learning_rate):
+        return (momentum_term * weight_moments) + gradients
+
+    def update_momentum(weights_matrices=[], weights_moments=[]):
+        return weights_matrices - (alpha * weights_moments)

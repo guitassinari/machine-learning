@@ -73,6 +73,7 @@ O Trabalho 2 da disciplina consiste na implementação de uma rede neural treina
 inclui a implementação de todas as características principais de redes neurais discutidas ao longo do
 semestre. Em particular, os grupos deverão implementar:
 
+
 • uma rede neural composta por um número ajustável de neurônios e camadas e treinada via
 backpropagation;
 • funcionalidade que permita, via linha de comando, informar a sua implementação a estrutura de uma rede de teste (i.e., estrutura de camadas/neurônios, pesos iniciais, e fator de
@@ -82,6 +83,7 @@ peso;
 a fim de checar a corretude da implementação de cada grupo;
 • um mecanismo para normalização das features/dados de treinamentos;
 • mecanismo para uso de regularização.
+
 
 Ao implementar a sua rede, não esqueça de incluir uma entrada de bias em cada neurônio, de
 utilizar um método apropriado para normalização de atributos, e de tomar cuidado para que a atualização dos pesos dos neurônios de bias seja feita da maneira correta/apropriada caso regularização
