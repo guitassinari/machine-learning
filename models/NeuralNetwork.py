@@ -17,6 +17,7 @@ class NeuralNetwork:
         self._lambda = hyper_parameters["lambda"] or 0.1
         self.last_activations = [None] * self.n_layers
         self.deltas = [None] * self.n_layers
+        self.alpha = hyper_parameters["alpha"] or 0.1
         self.build_neurons()
         self.train(training_set)
 
@@ -46,7 +47,7 @@ class NeuralNetwork:
         self.last_activations[layer] = activations
         return activations
 
-    def back_propagate(self, expected_outputs=[], mini_batch_size, run_momentum, momentum_term):
+    def back_propagate(self, mini_batch_size, run_momentum, momentum_term, expected_outputs=[]):
         batch_counter = 0
         for layer in reversed(range(self.n_layers)):  # ate criterio de parada?
             if layer == self.last_layer_index():
@@ -85,15 +86,15 @@ class NeuralNetwork:
                     else:
                         for weight in weights:
                             # atualiza pesos de acordo com a média dos gradientes
-                            weights = weights - (alpha * (regularized_gradients/mini_batch_size))
+                            weights = weights - (self.alpha * (regularized_gradients/mini_batch_size))
                             # atualizando peso de bias
-                            weights_bias = weights_bias - (alpha * (gradients/mini_batch_size))
+                            weights_bias = weights_bias - (self.alpha * (gradients/mini_batch_size))
                 # usar momentum aqui
                 else:
                     for weight in weights:
-                        weights = weights - (alpha * regularized_gradients)
+                        weights = weights - (self.alpha * regularized_gradients)
                         # atualizando peso de bias
-                        weights_bias = weights_bias - (alpha * gradients)
+                        weights_bias = weights_bias - (self.alpha * gradients)
 
             # atualiza cada camada da rede
             self.deltas[layer] = deltas
@@ -138,7 +139,7 @@ class NeuralNetwork:
     def array_to_matrix(self, array=[]):
         return list(map(lambda inp: [inp], array))
 
-    def numerical_verifier(epsilon, weights_matrices=[], gradients=[], expected_outputs=[]):
+    def numerical_verifier(self, epsilon, weights_matrices=[], gradients=[], expected_outputs=[]):
         # J(T1 -epsilon, T2,...) - J(t1+epsilon, T2,...)
         # _______________________________________________
         #                   2*epsilon
@@ -153,18 +154,18 @@ class NeuralNetwork:
 
             weights_minus[index] -= epsilon
             weights_plus[index] += epsilon
-            numerical_grad = (loss(weights_plus, expected_outputs) - loss(weights_minus, expected_outputs)) / (2*epsilon)
+            numerical_grad = (self.loss(weights_plus, expected_outputs) - self.loss(weights_minus, expected_outputs)) / (2*epsilon)
             # Ideia aqui e printar duas colunas lado a lado
             # A primeira sera o valor calculado pela rede
             # A segunda o valor aproximado numericamente
 
             # Se der tempo vamos mostrar graficamente o diferenca
-            print("Gradients: " gradients[row,col], numerical_grad[row,col])
+            # print("Gradients: " gradients[row,col], numerical_grad[row,col])
         return
 
-    def momentum(momentum_term, weight_moments=[], gradients=[], iterator):
+    def momentum(self, momentum_term, iterator, weight_moments=[], gradients=[]):
         weight_moments[iterator] = (momentum_term * weight_moments) + gradients
 
         return
-    def update_momentum(weights_matrices=[], weights_moments=[], alpha, iterator):
-        return weights_matrices[iterator] - (alpha * weights_moments~[iterator])
+    def update_momentum(self, alpha, iterator, weights_matrices=[], weights_moments=[]):
+        return weights_matrices[iterator] - (alpha * weights_moments[iterator])
