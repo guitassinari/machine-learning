@@ -54,9 +54,13 @@ class NeuralNetwork:
             else:
                 activations = self.last_activations[layer]
                 weights = self.weight_matrices[layer]
+                weights_bias = self.bias_weights_matrices[layer]
                 next_layer_deltas = self.deltas[layer+1]
                 deltas = NeuralNetworkMath.delta(activations,
                                                  weights,
+                                                 next_layer_deltas)
+                deltas_bias = NeuralNetworkMath.delta(activations,
+                                                 weights_bias,
                                                  next_layer_deltas)
                 # acumula em D(l=k) os gradientes com base no exemplo atual
                 # fara isso para cada camada
@@ -77,18 +81,25 @@ class NeuralNetwork:
                         batch_counter += 1
                         # acumula gradientes
                         regularized_gradients += regularized_gradients
-                    else
+                        gradients += gradients
+                    else:
                         for weight in weights:
-                        # atualiza pesos de acordo com a média dos gradientes
-                        weights = weights - (alpha * (regularized_gradients/mini_batch_size)
+                            # atualiza pesos de acordo com a média dos gradientes
+                            weights = weights - (alpha * (regularized_gradients/mini_batch_size))
+                            # atualizando peso de bias
+                            weights_bias = weights_bias - (alpha * (gradients/mini_batch_size))
                 # usar momentum aqui
-                else
+                else:
                     for weight in weights:
                         weights = weights - (alpha * regularized_gradients)
+                        # atualizando peso de bias
+                        weights_bias = weights_bias - (alpha * gradients)
 
             # atualiza cada camada da rede
             self.deltas[layer] = deltas
             self.weight_matrices[layer] = weights
+            self.bias_weights_matrices[layer] = weights_bias
+        return
 
     def output_deltas(self, output_matrix=[[]]):
         outputs = self.last_activations[self.last_layer_index()]
@@ -126,15 +137,15 @@ class NeuralNetwork:
 
     def array_to_matrix(self, array=[]):
         return list(map(lambda inp: [inp], array))
-# J(T1 -epsilon, T2,...) - J(t1+epsilon, T2,...)
-# _______________________________________________
-#                   2*epsilon
-
-# funcionalidade que permita, via linha de comando,
-# efetuar a verificação numérica do gradiente,
-# a fim de checar a corretude da implementação de cada grupo;
 
     def numerical_verifier(epsilon, weights_matrices=[], gradients=[], expected_outputs=[]):
+        # J(T1 -epsilon, T2,...) - J(t1+epsilon, T2,...)
+        # _______________________________________________
+        #                   2*epsilon
+
+        # funcionalidade que permita, via linha de comando,
+        # efetuar a verificação numérica do gradiente,
+        # a fim de checar a corretude da implementação de cada grupo;
         numerical_grad = 0
         for index in weights_matrices:
             weights_minus = weights_matrices[:]  # coloa a matrix inteira para variavel

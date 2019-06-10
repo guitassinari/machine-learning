@@ -43,7 +43,7 @@ Itens verificado(OK):
 (F) (-) Verificação numérica do gradiente;
 (F) (-) Gradiente;
 (F) (-) Propagação da entrada;
-(F) (-) Suporte a regularização
+(F) (-) Suporte a regularização. Esta fazendo certo para o BIAS???????????
 (F) (-) Suporte a vetorização;
 (F) (-) Backpropagation implementado de forma completa e correta;
 (F) (-) K-folds+F1 score;
