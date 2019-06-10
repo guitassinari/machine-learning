@@ -46,7 +46,8 @@ class NeuralNetwork:
         self.last_activations[layer] = activations
         return activations
 
-    def back_propagate(self, expected_outputs=[]):
+    def back_propagate(self, expected_outputs=[], mini_batch_size):
+        batch_counter = 0
         for layer in reversed(range(self.n_layers)):  # ate criterio de parada?
             if layer == self.last_layer_index():
                 deltas = self.outputs(expected_outputs)
@@ -68,6 +69,19 @@ class NeuralNetwork:
                 # divide por #exemplos para calcular gradiente médio
                 regularized_gradients = (1/len(self.training_set.examples)) * (gradients + gradients_reg)
                 # atualiza pesos de cada camada com base nos gradientes
+
+                # caso o mini_batch seja maior que 1 (diferente de estocástico)
+                if mini_batch_size > 1:
+                    if mini_batch_size != batch_counter
+                        # conta iterações do batch
+                        batch_counter += 1
+                        # acumula gradientes
+                        regularized_gradients += regularized_gradients
+                    else
+                    for weight in weights:
+                        # atualiza pesos de acordo com a média dos gradientes
+                        weights = weights - (alpha * (regularized_gradients/mini_batch_size)
+                else
                 for weight in weights:
                     weights = weights - (alpha * regularized_gradients)
 
