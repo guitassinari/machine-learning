@@ -139,7 +139,7 @@ class NeuralNetwork:
     def array_to_matrix(self, array=[]):
         return list(map(lambda inp: [inp], array))
 
-    def numerical_verifier(self, epsilon, weights_matrices=[], gradients=[], expected_outputs=[]):
+    def numerical_verifier(self, epsilon, gradients=[], expected_outputs=[]):
         # J(T1 -epsilon, T2,...) - J(t1+epsilon, T2,...)
         # _______________________________________________
         #                   2*epsilon
@@ -148,10 +148,9 @@ class NeuralNetwork:
         # efetuar a verificação numérica do gradiente,
         # a fim de checar a corretude da implementação de cada grupo;
         numerical_grad = 0
-        for index in weights_matrices:
-            weights_minus = weights_matrices[:]  # coloa a matrix inteira para variavel
-            weights_plus = weights_matrices[:]
-
+        weights_minus = self.weights_matrices[:]  # coloa a matrix inteira para variavel
+        weights_plus = self.weights_matrices[:]
+        for index in weights_plus:
             weights_minus[index] -= epsilon
             weights_plus[index] += epsilon
             numerical_grad = (self.loss(weights_plus, expected_outputs) - self.loss(weights_minus, expected_outputs)) / (2*epsilon)
@@ -163,9 +162,10 @@ class NeuralNetwork:
             # print("Gradients: " gradients[row,col], numerical_grad[row,col])
         return
 
-    def momentum(self, momentum_term, iterator, weight_moments=[], gradients=[]):
-        weight_moments[iterator] = (momentum_term * weight_moments) + gradients
+    def momentum(self, momentum_term, iterator, gradients=[]):
+        weight_moments = []
+        weight_moments[iterator] = (momentum_term * self.weight_moments) + gradients
 
         return
-    def update_momentum(self, iterator, weights_matrices=[], weights_moments=[]):
-        return weights_matrices[iterator] - (self.alpha * weights_moments[iterator])
+    def update_momentum(self, iterator, weights_moments=[]):
+        return self.weights_matrices[iterator] - (self.alpha * self.weights_moments[iterator])
