@@ -46,7 +46,7 @@ class NeuralNetwork:
         self.last_activations[layer] = activations
         return activations
 
-    def back_propagate(self, expected_outputs=[], mini_batch_size):
+    def back_propagate(self, expected_outputs=[], mini_batch_size, run_momentum, momentum_term):
         batch_counter = 0
         for layer in reversed(range(self.n_layers)):  # ate criterio de parada?
             if layer == self.last_layer_index():
@@ -72,18 +72,19 @@ class NeuralNetwork:
 
                 # caso o mini_batch seja maior que 1 (diferente de estocástico)
                 if mini_batch_size > 1:
-                    if mini_batch_size != batch_counter
+                    if mini_batch_size != batch_counter:
                         # conta iterações do batch
                         batch_counter += 1
                         # acumula gradientes
                         regularized_gradients += regularized_gradients
                     else
-                    for weight in weights:
+                        for weight in weights:
                         # atualiza pesos de acordo com a média dos gradientes
                         weights = weights - (alpha * (regularized_gradients/mini_batch_size)
+                # usar momentum aqui
                 else
-                for weight in weights:
-                    weights = weights - (alpha * regularized_gradients)
+                    for weight in weights:
+                        weights = weights - (alpha * regularized_gradients)
 
             # atualiza cada camada da rede
             self.deltas[layer] = deltas
@@ -133,13 +134,6 @@ class NeuralNetwork:
 # efetuar a verificação numérica do gradiente,
 # a fim de checar a corretude da implementação de cada grupo;
 
-'''
-funcionalidade que permita, via linha de comando,
-informar a sua implementação a estrutura de uma rede de
-teste (i.e., estrutura de camadas/neurônios, pesos iniciais, e fator de
-regularização), e um conjunto de treinamento, e que retorne o gradiente calculado para cada
-peso;
-'''
     def numerical_verifier(epsilon, weights_matrices=[], gradients=[], expected_outputs=[]):
         numerical_grad = 0
         for index in weights_matrices:
@@ -157,8 +151,9 @@ peso;
             print("Gradients: " gradients[row,col], numerical_grad[row,col])
         return
 
-    def momentum(inputs=[], expected_outputs=[], alpha, weights_matrices=[], weight_moments=[], gradients=[], learning_rate):
-        return (momentum_term * weight_moments) + gradients
+    def momentum(momentum_term, weight_moments=[], gradients=[], iterator):
+        weight_moments[iterator] = (momentum_term * weight_moments) + gradients
 
-    def update_momentum(weights_matrices=[], weights_moments=[]):
-        return weights_matrices - (alpha * weights_moments)
+        return
+    def update_momentum(weights_matrices=[], weights_moments=[], alpha, iterator):
+        return weights_matrices[iterator] - (alpha * weights_moments~[iterator])
