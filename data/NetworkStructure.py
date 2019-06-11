@@ -3,7 +3,6 @@ class NetworkStructure:
     def __init__(self, file_path):
         self.file_path = file_path
 
-
     def read(self):
         examples = []
         with open(self.file_path) as csv_file:
