@@ -5,6 +5,8 @@ from model_training.CrossValidation import CrossValidation
 from charts.LineChart import LineChart
 from data.DatasetFile import DatasetFile
 from data.HyperParametersFile import HyperParametersFile
+from data.NetworkStructure import NetworkStructure
+from data.InitialWeights import InitialWeights
 import numpy as np
 import argparse
 import importlib
