@@ -60,3 +60,4 @@ class Example:
             return AttributeType.NUMERIC
         except ValueError:
             return AttributeType.CATEGORIC
+

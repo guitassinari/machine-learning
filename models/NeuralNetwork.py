@@ -32,7 +32,7 @@ class NeuralNetwork:
 
     def outputs(self, inputs=[]):
         features_matrix = self.array_to_matrix(inputs)
-        accumulator = features_matrix
+        accumulator = np.array(features_matrix).astype(np.float)
         # Multiplica todas as matrizes, (entrada x pesos) + bias.
         # Forward propagation
         for layer_i in range(len(self.weight_matrices)):
@@ -86,17 +86,16 @@ class NeuralNetwork:
     def train(self, training_dataset):
         all_examples = training_dataset.get_examples()
         n_examples = len(all_examples)
-        gradients = self.weight_matrices.copy()
+        gradients = np.array(self.weight_matrices.copy())
         gradients.fill(0)
-        bias_gradients = self.bias_weights_matrices.copy()
+        bias_gradients = np.array(self.bias_weights_matrices.copy())
         bias_gradients.fill(0)
         batch_counter = 0
-        for example_index in range(n_examples):
+        for example_index in range(n_examples): # podemos adicionar alguma condição de parada aqui
             batch_counter += 1
             example = training_dataset.get_example_at(example_index)
             inputs = example.get_body()
             outputs = self.outputs(inputs)
-            expected_outputs = []
             self.back_propagate(expected_outputs=expected_outputs)
             new_gradients = NeuralNetworkMath\
                 .all_gradients(activations_matrices=self.last_activations,
