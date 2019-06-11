@@ -17,6 +17,7 @@ class NeuralNetwork:
         self._lambda = hyper_parameters["lambda"] or 0.1
         self.last_activations = [None] * self.n_layers
         self.deltas = [None] * self.n_layers
+        self.alpha = hyper_parameters["alpha"] or 0.1
         self.build_neurons()
         self.train(training_set)
 
@@ -46,16 +47,21 @@ class NeuralNetwork:
         self.last_activations[layer] = activations
         return activations
 
-    def back_propagate(self, expected_outputs=[]):
+    def back_propagate(self, mini_batch_size, run_momentum, momentum_term, expected_outputs=[]):
+        batch_counter = 0
         for layer in reversed(range(self.n_layers)):  # ate criterio de parada?
             if layer == self.last_layer_index():
                 deltas = self.outputs(expected_outputs)
             else:
                 activations = self.last_activations[layer]
                 weights = self.weight_matrices[layer]
+                weights_bias = self.bias_weights_matrices[layer]
                 next_layer_deltas = self.deltas[layer+1]
                 deltas = NeuralNetworkMath.delta(activations,
                                                  weights,
+                                                 next_layer_deltas)
+                deltas_bias = NeuralNetworkMath.delta(activations,
+                                                 weights_bias,
                                                  next_layer_deltas)
                 # acumula em D(l=k) os gradientes com base no exemplo atual
                 # fara isso para cada camada
@@ -68,12 +74,33 @@ class NeuralNetwork:
                 # divide por #exemplos para calcular gradiente médio
                 regularized_gradients = (1/len(self.training_set.examples)) * (gradients + gradients_reg)
                 # atualiza pesos de cada camada com base nos gradientes
-                for weight in weights:
-                    weights = weights - (alpha * regularized_gradients)
+
+                # caso o mini_batch seja maior que 1 (diferente de estocástico)
+                if mini_batch_size > 1:
+                    if mini_batch_size != batch_counter:
+                        # conta iterações do batch
+                        batch_counter += 1
+                        # acumula gradientes
+                        regularized_gradients += regularized_gradients
+                        gradients += gradients
+                    else:
+                        for weight in weights:
+                            # atualiza pesos de acordo com a média dos gradientes
+                            weights = weights - (self.alpha * (regularized_gradients/mini_batch_size))
+                            # atualizando peso de bias
+                            weights_bias = weights_bias - (self.alpha * (gradients/mini_batch_size))
+                # usar momentum aqui
+                else:
+                    for weight in weights:
+                        weights = weights - (self.alpha * regularized_gradients)
+                        # atualizando peso de bias
+                        weights_bias = weights_bias - (self.alpha * gradients)
 
             # atualiza cada camada da rede
             self.deltas[layer] = deltas
             self.weight_matrices[layer] = weights
+            self.bias_weights_matrices[layer] = weights_bias
+        return
 
     def output_deltas(self, output_matrix=[[]]):
         outputs = self.last_activations[self.last_layer_index()]
@@ -111,34 +138,34 @@ class NeuralNetwork:
 
     def array_to_matrix(self, array=[]):
         return list(map(lambda inp: [inp], array))
-# J(T1 -epsilon, T2,...) - J(t1+epsilon, T2,...)
-# _______________________________________________
-#                   2*epsilon
 
-# funcionalidade que permita, via linha de comando,
-# efetuar a verificação numérica do gradiente,
-# a fim de checar a corretude da implementação de cada grupo;
+    def numerical_verifier(self, epsilon, gradients=[], expected_outputs=[]):
+        # J(T1 -epsilon, T2,...) - J(t1+epsilon, T2,...)
+        # _______________________________________________
+        #                   2*epsilon
 
-'''
-funcionalidade que permita, via linha de comando,
-informar a sua implementação a estrutura de uma rede de
-teste (i.e., estrutura de camadas/neurônios, pesos iniciais, e fator de
-regularização), e um conjunto de treinamento, e que retorne o gradiente calculado para cada
-peso;
-'''
-    def numerical_verifier(epsilon, weights_matrices=[], gradients=[], expected_outputs=[]):
+        # funcionalidade que permita, via linha de comando,
+        # efetuar a verificação numérica do gradiente,
+        # a fim de checar a corretude da implementação de cada grupo;
         numerical_grad = 0
-        for index in weights_matrices:
-            weights_minus = weights_matrices[:]  # coloa a matrix inteira para variavel
-            weights_plus = weights_matrices[:]
-
+        weights_minus = self.weights_matrices[:]  # coloa a matrix inteira para variavel
+        weights_plus = self.weights_matrices[:]
+        for index in weights_plus:
             weights_minus[index] -= epsilon
             weights_plus[index] += epsilon
-            numerical_grad = (loss(weights_plus, expected_outputs) - loss(weights_minus, expected_outputs)) / (2*epsilon)
+            numerical_grad = (self.loss(weights_plus, expected_outputs) - self.loss(weights_minus, expected_outputs)) / (2*epsilon)
             # Ideia aqui e printar duas colunas lado a lado
             # A primeira sera o valor calculado pela rede
             # A segunda o valor aproximado numericamente
 
             # Se der tempo vamos mostrar graficamente o diferenca
-            print("Gradients: " gradients[row,col], numerical_grad[row,col])
+            # print("Gradients: " gradients[row,col], numerical_grad[row,col])
         return
+
+    def momentum(self, momentum_term, iterator, gradients=[]):
+        weight_moments = []
+        weight_moments[iterator] = (momentum_term * self.weight_moments) + gradients
+
+        return
+    def update_momentum(self, iterator, weights_moments=[]):
+        return self.weights_matrices[iterator] - (self.alpha * self.weights_moments[iterator])

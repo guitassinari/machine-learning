@@ -50,7 +50,6 @@ class NeuralNetworkMath:
             gradients.append(cls.gradient(activation_matrix, delta_matrix))
         return gradients
 
-
     @classmethod
     def gradient(cls, activations_matrix=[], next_layer_deltas_matrix=[]):
         transposed_activation = np.array(activations_matrix).transpose()
