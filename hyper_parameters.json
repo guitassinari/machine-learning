@@ -1,7 +1,5 @@
 {
   "parameters": [
-    { "n_trees": 10, "n_attr_sample": 6, "max_depth": 15 },
-    { "n_trees": 25, "n_attr_sample": 6, "max_depth": 15 },
-    { "n_trees": 50, "n_attr_sample": 6, "max_depth": 15 }
+    { "layers_structure": [2,2,2], "lambda": 0.1, "alpha": 0.001, "batch_size": 4}
   ]
 }
