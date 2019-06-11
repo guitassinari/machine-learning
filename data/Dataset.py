@@ -290,12 +290,9 @@ class Dataset:
         vector_min = np.amin(attributes_matrix, axis=0)
         vector_max = np.amax(attributes_matrix, axis=0)
 
-        for example in all_examples:
-            example_split = example.split()
-            for column in example_split:
-                new_example = self.data_normalization_math(example_split[column],
-                                                           vector_max[column],
-                                                           vector_min[column])
-                example_split[column] = new_example
-        self.examples = all_examples
-        return example
+        normalize_factors_list = np.multiply(2 / np.subtract(vector_max, vector_min))
+        normalize_factors_matrix = map(lambda factor: [factor], normalize_factors_list)
+        normalized_attributes = np.multiply(attributes_matrix, normalize_factors_matrix)
+        normalized_attributes = np.subtract(normalized_attributes, 1)
+
+        self.examples = map(lambda attrs: Example(attrs, self.attr_names, self.attr_values), normalized_attributes)
