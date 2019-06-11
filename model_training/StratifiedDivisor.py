@@ -29,4 +29,3 @@ class StratifiedDivisor:
     def get_test_set(self, version):
         examples_indexes = self.test_sets_indexes[version]
         return self.dataset.subset(examples_indexes)
-

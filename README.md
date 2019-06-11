@@ -112,6 +112,7 @@ $ ./backpropagation network.txt initial_weights.txt dataset.txt
   bias não deve ser contabilizado na quantidade de neurônios de cada camada.
   Uma rede com 2 entradas, uma camada oculta com 3 neurônios, e 1 saída, por exemplo,
   e com fator de regularização λ = 0:25, seria descrita neste arquivo da seguinte forma:
+
   0.25
   2
   3
@@ -124,6 +125,7 @@ $ ./backpropagation network.txt initial_weights.txt dataset.txt
   ponto-e-vírgula. Note que o primeiro peso de cada neurônio corresponde ao peso de bias.
 
   Os seus pesos seriam codificados no arquivo initial_weights.txt da seguinte forma:
+
   0.4, 0.1; 0.3, 0.2
   0.7, 0.5, 0.6
 ##--------------------------------------------------------------------
