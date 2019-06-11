@@ -21,7 +21,7 @@ class NeuralNetworkMath:
         https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html
         """
         # logaritmo natural das predições
-        #expected_outputs representa todos os neuroios de saida???
+        # expected_outputs representa todos os neuroios de saida???
         ln_real_outputs = list(map(np.log, real_outputs))
         multiplied = np.multiply(ln_real_outputs, expected_outputs)
         return -sum(multiplied)
@@ -72,9 +72,7 @@ class NeuralNetworkMath:
                               activation_matrices=[],
                               deltas_matrices=[],
                               weights_matrices=[],
-                              _lambda=0.1,
-                              n_examples=1):
+                              _lambda=0.1):
         gradients = cls.all_gradients(activation_matrices, deltas_matrices)
         reg_matrix = cls.gradient_regularization(_lambda, weights_matrices)
-        reg_factor = 1/n_examples
-        return np.multiply(reg_factor, np.sum(gradients, reg_matrix)).tolist()
+        return np.sum(gradients, reg_matrix).tolist()
