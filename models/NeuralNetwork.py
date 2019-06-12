@@ -54,11 +54,11 @@ class NeuralNetwork:
         return activations
 
     def back_propagate(self, expected_outputs=[], activations=[]):
-        bias_deltas_matrices = []
         last_activation = activations[-1]
         deltas = NeuralNetworkMath.output_delta(expected_outputs, last_activation)
         deltas_matrices = [deltas]
         last_delta = deltas.copy()
+        bias_deltas_matrices = [deltas]
         for layer in reversed(range(self.n_hidden_layers)):
             weight_matrix = self.weight_matrices[layer+1]
             bias_matrix = self.bias_weights_matrices[layer+1]
@@ -66,25 +66,23 @@ class NeuralNetwork:
             deltas = NeuralNetworkMath.delta(activation,
                                              weight_matrix,
                                              last_delta)
-            deltas_bias = NeuralNetworkMath.delta(activation,
-                                                  bias_matrix,
-                                                  last_delta)
             last_delta = deltas
-            bias_deltas_matrices.insert(0, deltas_bias)
+            bias_deltas_matrices.insert(0, deltas)
             deltas_matrices.insert(0, deltas)
         self.deltas = deltas_matrices
         self.bias_deltas = bias_deltas_matrices
 
     def update_weights(self, old_weights=[], gradients_matrices=[], alpha=0.1):
-        new_weights_matrices = []
         print("OLD", old_weights)
         print("NEW", gradients_matrices)
-        for weight_index in range(len(old_weights)):
-            gradient_matrix = gradients_matrices[weight_index]
-            weight_matrix = old_weights[weight_index]
-            alpha_gradient_matrix = np.multiply(alpha, gradient_matrix)
-            new_weights = np.subtract(weight_matrix, alpha_gradient_matrix)
-            new_weights_matrices.append(list(new_weights.tolist()))
+        alpha_gradients = list(map(lambda matrix: np.multiply(matrix, alpha), gradients_matrices))
+
+        new_weights_matrices = NeuralNetworkMath.matrix_list_operation(
+            np.subtract,
+            old_weights,
+            alpha_gradients
+        )
+
         return new_weights_matrices
 
     def train(self, training_dataset):
@@ -134,6 +132,7 @@ class NeuralNetwork:
                 self.weight_matrices = self.update_weights(old_weights=self.weight_matrices,
                                                            gradients_matrices=gradients,
                                                            alpha=self.alpha)
+
                 bias_gradients = list(map(lambda matrix: np.divide(matrix, n_examples), bias_gradients))
                 self.bias_weights_matrices = self.update_weights(old_weights=self.bias_weights_matrices,
                                                                  gradients_matrices=bias_gradients,

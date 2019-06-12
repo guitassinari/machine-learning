@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import numpy as np
-
+from itertools import zip_longest
 
 class NeuralNetworkMath:
     def __init__(self):
@@ -84,7 +84,7 @@ class NeuralNetworkMath:
     @classmethod
     def matrix_list_operation(cls, operator, list_1=[], list_2=[]):
         results = []
-        for matrix_a, matrix_b in zip(list_1, list_2):
+        for matrix_a, matrix_b in zip_longest(list_1, list_2):
             result = operator(matrix_a, matrix_b)
             results.append(result)
         return results
