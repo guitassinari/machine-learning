@@ -49,6 +49,7 @@ class NeuralNetwork:
         weights = self.weight_matrices[layer]
         bias = self.bias_weights_matrices[layer]
         multiplied = weights.dot(acc_matrix)
+        #
         zs = np.add(multiplied, bias)
         activations = NeuralNetworkMath.sigmoid(zs)
         return activations
@@ -58,6 +59,7 @@ class NeuralNetwork:
         deltas = NeuralNetworkMath.output_delta(expected_outputs, last_activation)
         deltas_matrices = [deltas]
         last_delta = deltas.copy()
+        # deltas do bias são os próprios deltas da camada seguinte. (A12S101)
         bias_deltas_matrices = [deltas]
         for layer in reversed(range(self.n_hidden_layers)):
             weight_matrix = self.weight_matrices[layer+1]
@@ -67,6 +69,8 @@ class NeuralNetwork:
                                              weight_matrix,
                                              last_delta)
             last_delta = deltas
+
+            # deltas do bias são os próprios deltas da camada seguinte. (A12S101)
             bias_deltas_matrices.insert(0, deltas)
             deltas_matrices.insert(0, deltas)
         self.deltas = deltas_matrices
