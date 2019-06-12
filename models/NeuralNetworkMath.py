@@ -81,3 +81,10 @@ class NeuralNetworkMath:
         reg_matrix = cls.gradient_regularization(_lambda, weights_matrices)
         return np.add(gradients, reg_matrix)
 
+    @classmethod
+    def matrix_list_operation(cls, operator, list_1=[], list_2=[]):
+        results = []
+        for matrix_a, matrix_b in zip(list_1, list_2):
+            result = operator(matrix_a, matrix_b)
+            results.append(result)
+        return results

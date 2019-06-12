@@ -48,7 +48,6 @@ class NeuralNetwork:
     def hidden_activation(self, acc_matrix=[], layer=0):
         weights = self.weight_matrices[layer]
         bias = self.bias_weights_matrices[layer]
-        print(acc_matrix.shape)
         multiplied = weights.dot(acc_matrix)
         zs = np.add(multiplied, bias)
         activations = NeuralNetworkMath.sigmoid(zs)
@@ -78,6 +77,8 @@ class NeuralNetwork:
 
     def update_weights(self, old_weights=[], gradients_matrices=[], alpha=0.1):
         new_weights_matrices = []
+        print("OLD", old_weights)
+        print("NEW", gradients_matrices)
         for weight_index in range(len(old_weights)):
             gradient_matrix = gradients_matrices[weight_index]
             weight_matrix = old_weights[weight_index]
@@ -94,7 +95,6 @@ class NeuralNetwork:
         batch_counter = 0
         for example_index in range(n_examples): # podemos adicionar alguma condição de parada aqui
             batch_counter += 1
-            print("EXAMPLE ", example_index)
             example = training_dataset.get_example_at(example_index)
             inputs = example.get_body()
             inputs = np.array(inputs).astype(np.float).tolist()
@@ -103,7 +103,6 @@ class NeuralNetwork:
             self.back_propagate(expected_outputs=expected_outputs,
                                 activations=self.last_activations)
             input_and_activations = [inputs] + self.last_activations
-            print(input_and_activations)
             new_gradients = NeuralNetworkMath\
                 .all_gradients(activations_matrices=input_and_activations,
                                deltas_matrices=self.deltas)
@@ -111,13 +110,11 @@ class NeuralNetwork:
                 gradients = new_gradients
                 bias_gradients = self.bias_deltas
             else:
-                added_gradients = []
-                for index in range(len(gradients)):
-                    gradient = gradients[index]
-                    new_gradient = new_gradients[index]
-                    added_gradient = np.add(gradient, new_gradient)
-                    added_gradients.append(added_gradient)
-                gradients = added_gradients
+                gradients = NeuralNetworkMath.matrix_list_operation(
+                    np.add,
+                    gradients,
+                    new_gradients
+                )
                 bias_gradients = np.add(bias_gradients, self.bias_deltas)
 
             # fim do batch ou último exemplo
@@ -128,29 +125,16 @@ class NeuralNetwork:
                     _lambda=self._lambda
                 )
 
-                regularized_gradients = []
-                for index in range(len(gradients)):
-                    gradient = gradients[index]
-                    reg_matrix = regularization[index]
-                    regularized_gradient = np.add(gradient, reg_matrix)
-                    regularized_gradients.append(regularized_gradient)
-                gradients = regularized_gradients
-
-                print("ADDED GRADIENTS", np.array(gradients[0]).shape)
-
-                divided_gradients = []
-                for gradient_matrix in gradients:
-                    divided_gradient = np.divide(gradient_matrix, n_examples)
-                    divided_gradients.append(divided_gradient)
-                gradients = divided_gradients
+                gradients = NeuralNetworkMath.matrix_list_operation(
+                    np.add,
+                    gradients,
+                    regularization
+                )
+                gradients = list(map(lambda matrix: np.divide(matrix, n_examples), gradients))
                 self.weight_matrices = self.update_weights(old_weights=self.weight_matrices,
                                                            gradients_matrices=gradients,
                                                            alpha=self.alpha)
-                divided_bias_gradients = []
-                for bias_gradient_matrix in bias_gradients:
-                    divided_gradient = np.divide(bias_gradient_matrix, n_examples)
-                    divided_bias_gradients.append(divided_gradient)
-                bias_gradients = divided_bias_gradients
+                bias_gradients = list(map(lambda matrix: np.divide(matrix, n_examples), bias_gradients))
                 self.bias_weights_matrices = self.update_weights(old_weights=self.bias_weights_matrices,
                                                                  gradients_matrices=bias_gradients,
                                                                  alpha=self.alpha)
