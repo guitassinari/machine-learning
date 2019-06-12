@@ -12,13 +12,14 @@ class NeuralNetwork:
         self.debug = debug
         self.layer_neurons = layers_n_neurons
         self.n_layers = len(layers_n_neurons)
+        self.n_hidden_layers = self.n_layers - 2
         self.weight_matrices = []
         self.bias_weights_matrices = []
         self._lambda = hyper_parameters["lambda"] or 0.1
         self.batch_size = hyper_parameters["batch_size"] or 1
-        self.last_activations = [None] * (self.n_layers-1)
-        self.deltas = [None] * self.n_layers
-        self.bias_deltas = [None] * self.n_layers
+        self.last_activations = []
+        self.deltas = []
+        self.bias_deltas = []
         self.alpha = hyper_parameters["alpha"] or 0.1
         self.build_neurons()
         self.train(training_set)
@@ -35,39 +36,45 @@ class NeuralNetwork:
         accumulator = np.array(features_matrix).astype(np.float)
         # Multiplica todas as matrizes, (entrada x pesos) + bias.
         # Forward propagation
+        last_activations = []
+
         for layer_i in range(self.n_layers-1):
             accumulator = self.hidden_activation(accumulator, layer_i)
-        return accumulator.tolist()
+            last_activations.append(accumulator)
+
+        self.last_activations = last_activations
+        return accumulator
 
     def hidden_activation(self, acc_matrix=[], layer=0):
         weights = self.weight_matrices[layer]
         bias = self.bias_weights_matrices[layer]
-        zs = np.add(weights.dot(acc_matrix), bias)
+        print(acc_matrix.shape)
+        multiplied = weights.dot(acc_matrix)
+        zs = np.add(multiplied, bias)
         activations = NeuralNetworkMath.sigmoid(zs)
-        self.last_activations[layer] = activations
         return activations
 
     def back_propagate(self, expected_outputs=[], activations=[]):
-        for layer in reversed(range(self.n_layers-1)):  # ate criterio de parada?
-            if layer == self.n_layers-2:
-                last_activation = activations[layer]
-                deltas = self.output_deltas(expected_outputs, last_activation)
-                self.deltas[layer] = deltas
-            else:
-                activation = activations[layer]
-                weight_matrix = self.weight_matrices[layer+1]
-                bias_matrix = self.bias_weights_matrices[layer]
-                next_layer_deltas = self.deltas[layer+1]
-                deltas = NeuralNetworkMath.delta(activation,
-                                                 weight_matrix,
-                                                 next_layer_deltas)
-                deltas_bias = NeuralNetworkMath.delta(activation,
-                                                      bias_matrix,
-                                                      next_layer_deltas)
-                self.bias_deltas[layer] = deltas_bias
-                self.deltas[layer] = deltas
-                self.weight_matrices[layer] = weight_matrix
-                self.bias_weights_matrices[layer] = bias_matrix
+        bias_deltas_matrices = []
+        last_activation = activations[-1]
+        deltas = NeuralNetworkMath.output_delta(expected_outputs, last_activation)
+        deltas_matrices = [deltas]
+        last_delta = deltas.copy()
+        for layer in reversed(range(self.n_hidden_layers)):
+            weight_matrix = self.weight_matrices[layer+1]
+            bias_matrix = self.bias_weights_matrices[layer+1]
+            activation = activations[layer]
+            deltas = NeuralNetworkMath.delta(activation,
+                                             weight_matrix,
+                                             last_delta)
+            deltas_bias = NeuralNetworkMath.delta(activation,
+                                                  bias_matrix,
+                                                  last_delta)
+            last_delta = deltas
+            bias_deltas_matrices.insert(0, deltas_bias)
+            deltas_matrices.insert(0, deltas)
+        self.deltas = deltas_matrices
+        self.bias_deltas = bias_deltas_matrices
 
     def update_weights(self, old_weights=[], gradients_matrices=[], alpha=0.1):
         new_weights_matrices = []
@@ -79,9 +86,6 @@ class NeuralNetwork:
             new_weights_matrices.append(list(new_weights.tolist()))
         return new_weights_matrices
 
-    def output_deltas(self, output_matrix=[[]], activations=[[]]):
-        return np.subtract(activations, output_matrix)
-
     def train(self, training_dataset):
         all_examples = training_dataset.get_examples()
         n_examples = len(all_examples)
@@ -90,36 +94,65 @@ class NeuralNetwork:
         batch_counter = 0
         for example_index in range(n_examples): # podemos adicionar alguma condição de parada aqui
             batch_counter += 1
+            print("EXAMPLE ", example_index)
             example = training_dataset.get_example_at(example_index)
             inputs = example.get_body()
+            inputs = np.array(inputs).astype(np.float).tolist()
             expected_outputs = self.example_expected_output(example, self.training_set)
             self.outputs(inputs)
             self.back_propagate(expected_outputs=expected_outputs,
                                 activations=self.last_activations)
+            input_and_activations = [inputs] + self.last_activations
+            print(input_and_activations)
             new_gradients = NeuralNetworkMath\
-                .all_gradients(activations_matrices=self.last_activations,
+                .all_gradients(activations_matrices=input_and_activations,
                                deltas_matrices=self.deltas)
             if gradients is None:
                 gradients = new_gradients
                 bias_gradients = self.bias_deltas
             else:
-                gradients = np.sum(gradients, new_gradients)
-                bias_gradients = np.sum(bias_gradients, self.bias_deltas)
+                added_gradients = []
+                for index in range(len(gradients)):
+                    gradient = gradients[index]
+                    new_gradient = new_gradients[index]
+                    added_gradient = np.add(gradient, new_gradient)
+                    added_gradients.append(added_gradient)
+                gradients = added_gradients
+                bias_gradients = np.add(bias_gradients, self.bias_deltas)
 
             # fim do batch ou último exemplo
             if batch_counter == self.batch_size or example_index == n_examples:
                 batch_counter = 0
                 regularization = NeuralNetworkMath.gradient_regularization(
                     weights_matrices=self.weight_matrices,
-                    _lambda=self._lambda)
-                gradients = np.sum(gradients, regularization)
-                gradients = gradients/n_examples
+                    _lambda=self._lambda
+                )
+
+                regularized_gradients = []
+                for index in range(len(gradients)):
+                    gradient = gradients[index]
+                    reg_matrix = regularization[index]
+                    regularized_gradient = np.add(gradient, reg_matrix)
+                    regularized_gradients.append(regularized_gradient)
+                gradients = regularized_gradients
+
+                print("ADDED GRADIENTS", np.array(gradients[0]).shape)
+
+                divided_gradients = []
+                for gradient_matrix in gradients:
+                    divided_gradient = np.divide(gradient_matrix, n_examples)
+                    divided_gradients.append(divided_gradient)
+                gradients = divided_gradients
                 self.weight_matrices = self.update_weights(old_weights=self.weight_matrices,
-                                                           gradients_matrices=list(gradients.tolist()),
+                                                           gradients_matrices=gradients,
                                                            alpha=self.alpha)
-                bias_gradients = bias_gradients/n_examples
+                divided_bias_gradients = []
+                for bias_gradient_matrix in bias_gradients:
+                    divided_gradient = np.divide(bias_gradient_matrix, n_examples)
+                    divided_bias_gradients.append(divided_gradient)
+                bias_gradients = divided_bias_gradients
                 self.bias_weights_matrices = self.update_weights(old_weights=self.bias_weights_matrices,
-                                                                 gradients_matrices=list(bias_gradients.tolist()),
+                                                                 gradients_matrices=bias_gradients,
                                                                  alpha=self.alpha)
 
     def build_neurons(self):

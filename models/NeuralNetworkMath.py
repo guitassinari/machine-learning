@@ -36,12 +36,16 @@ class NeuralNetworkMath:
 
     @classmethod
     def gradient_regularization(cls, _lambda=0.1, weights_matrices=[]):
-        return np.multiply(weights_matrices, _lambda).tolist()
+        regularization = []
+        for matrix in weights_matrices:
+            regularized_matrix = np.multiply(matrix, _lambda)
+            regularization.append(regularized_matrix.tolist())
+        return regularization
 
     @classmethod
     def all_gradients(cls, activations_matrices=[], deltas_matrices=[]):
         gradients = []
-        for index in range(len(activations_matrices)):
+        for index in range(len(activations_matrices)-1):
             activation_matrix = activations_matrices[index]
             delta_matrix = deltas_matrices[index]
             gradients.append(cls.gradient(activation_matrix, delta_matrix))
@@ -51,11 +55,11 @@ class NeuralNetworkMath:
     def gradient(cls, activations_matrix=[], next_layer_deltas_matrix=[]):
         transposed_activation = np.array(activations_matrix).transpose()
         deltas_matrix = np.array(next_layer_deltas_matrix)
-        return np.multiply(deltas_matrix, transposed_activation).tolist()
+        return np.multiply(deltas_matrix, transposed_activation)
 
     @classmethod
     def output_delta(cls, output=[], expected_output=[]):
-        return np.subtract(output, expected_output).tolist()
+        return np.subtract(output, expected_output)
 
     @classmethod
     def delta(cls, activations=[], weights=[], next_layer_deltas=[]):
@@ -65,7 +69,7 @@ class NeuralNetworkMath:
         weighted_deltas = np_weights.transpose().dot(np_deltas)
         one_sub_activations = np.subtract(1, np_activations)
         wtf_activation = np.multiply(one_sub_activations, np_activations)
-        return np.multiply(weighted_deltas, wtf_activation).tolist()
+        return np.multiply(weighted_deltas, wtf_activation)
 
     @classmethod
     def regularized_gradients(cls,
@@ -75,4 +79,5 @@ class NeuralNetworkMath:
                               _lambda=0.1):
         gradients = cls.all_gradients(activation_matrices, deltas_matrices)
         reg_matrix = cls.gradient_regularization(_lambda, weights_matrices)
-        return np.sum(gradients, reg_matrix).tolist()
+        return np.add(gradients, reg_matrix)
+
