@@ -29,7 +29,7 @@ def run():
     dataset_file_path = args.dataset
     network_file_path = args.network
     weights_file_path = args.weights
-    class_position = args.class_position
+    class_position = args.class_position[0]
 
     print("\n")
     print("Dataset path:", dataset_file_path)
@@ -37,9 +37,6 @@ def run():
     print("Initial weights path:", weights_file_path)
     print("\n")
 
-    print("------------ LENDO DATASET --------------\n")
-    dataset = DatasetFile(dataset_file_path, class_position).read()
-    print("\n")
 
     print("------------ LENDO LAMBDA E ESTRUTURA DA REDE --------------\n")
     _lambda, layers = NetworkStructure(network_file_path).read()
@@ -51,6 +48,19 @@ def run():
     weights, bias = InitialWeights(weights_file_path).read()
     print("WEIGHTS", weights)
     print("BIASES", bias)
+    print("\n")
+
+    print("------------ LENDO DATASET --------------\n")
+    dataset = DatasetFile(dataset_file_path, class_position).read()
+    examples = dataset.get_examples()
+
+    for example_index in range(len(examples)):
+        example = examples[example_index]
+        print("Exemplo", example_index)
+        print("x: ", example.get_body())
+        print("y: ", example.get_class())
+        print("\n")
+
     print("\n")
 
 
