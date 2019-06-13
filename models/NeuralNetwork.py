@@ -33,6 +33,7 @@ class NeuralNetwork:
         """
         features = example.get_body()
         outputs = self.outputs(features)
+        print(outputs)
         max_index = np.array(outputs).argmax()
         return self.training_set.get_uniq_classes()[max_index]
 
@@ -45,7 +46,7 @@ class NeuralNetwork:
         self.last_activations = NeuralNetworkMath.all_activations_for(inputs=accumulator,
                                                                       weights_matrices=self.weight_matrices,
                                                                       bias_matrices=self.bias_weights_matrices)
-        return accumulator
+        return self.last_activations[-1]
 
     def back_propagate(self, expected_outputs=[], activations=[]):
         last_activation = activations[-1]
@@ -89,7 +90,7 @@ class NeuralNetwork:
             inputs = example.get_body()
             inputs = np.array(inputs).astype(np.float).tolist()
             expected_outputs = self.example_expected_output(example, self.training_set)
-            self.outputs(inputs)
+            outputs = self.outputs(inputs)
             self.back_propagate(expected_outputs=expected_outputs,
                                 activations=self.last_activations)
             input_and_activations = [inputs] + self.last_activations

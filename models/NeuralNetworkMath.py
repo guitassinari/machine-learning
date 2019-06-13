@@ -3,6 +3,7 @@
 import numpy as np
 from itertools import zip_longest
 
+
 class NeuralNetworkMath:
     def __init__(self):
         pass

@@ -6,25 +6,23 @@ class InitialWeights:
         self.file_path = file_path
 
     def read(self):
-        weights = []
-        weights_bias = []
         with open(self.file_path) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=';')
-            for row in csv_reader:
-                # print("vetores", row)
-                vectors = csv.reader(row, delimiter=',')
-                for index in vectors:
-                    weights.append(index)
-                    # print("weights", weights)
-        # print("WEIGHTS", weights)
-        cont = 0
-        for ite in weights:
-            weights_bias.append(weights[cont][0])
-            del(weights[cont][0])
-            cont += 1
-            # print("cont", cont)
-            # print("weights bias", weights_bias)
-            # print("weights new", weights)
-        # print("WEIGHTS FINAL", weights)
-        # print("WEIGHTS BIAS", weights_bias)
-        return weights, weights_bias
+            print("LENDO ARQUIVO DE PESOS E BIASES\n")
+            bias_matrices = []
+            weight_matrices = []
+            csv_reader = csv.reader(csv_file, delimiter='\n')
+            for layer_weights_strings in csv_reader:
+                line_string = layer_weights_strings[0]
+                columns = line_string.split(';')
+                weight_matrix = []
+                bias_matrix = []
+                for weights_string in columns:
+                    weights = list(map(lambda weight_string: float(weight_string), weights_string.split(',')))
+                    bias = weights.pop(0)
+                    bias_matrix.append([bias])
+                    weight_matrix.append(weights)
+                bias_matrices.append(bias_matrix)
+                weight_matrices.append(weight_matrix)
+        print("MATRIZ DE PESOS:\n", weight_matrices)
+        print("MATRIZ DE BIAS:\n", bias_matrices)
+        return weight_matrices, bias_matrices
