@@ -7,7 +7,6 @@ class InitialWeights:
 
     def read(self):
         with open(self.file_path) as csv_file:
-            print("LENDO ARQUIVO DE PESOS E BIASES\n")
             bias_matrices = []
             weight_matrices = []
             csv_reader = csv.reader(csv_file, delimiter='\n')
@@ -23,6 +22,4 @@ class InitialWeights:
                     weight_matrix.append(weights)
                 bias_matrices.append(bias_matrix)
                 weight_matrices.append(weight_matrix)
-        print("MATRIZ DE PESOS:\n", weight_matrices)
-        print("MATRIZ DE BIAS:\n", bias_matrices)
         return weight_matrices, bias_matrices
