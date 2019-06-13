@@ -24,12 +24,15 @@ class NeuralNetwork:
         self.build_neurons()
         self.train(training_set)
 
-    def predict(self, features=[]):
+    def predict(self, example):
         """
         :param features:
         :return:
         """
-        return self.outputs(features)
+        features = example.get_body()
+        outputs = self.outputs(features)
+        max_index = np.array(outputs).argmax()
+        return self.training_set.get_uniq_classes()[max_index]
 
     def outputs(self, inputs=[]):
         features_matrix = self.array_to_matrix(inputs)
@@ -49,7 +52,6 @@ class NeuralNetwork:
         weights = self.weight_matrices[layer]
         bias = self.bias_weights_matrices[layer]
         multiplied = weights.dot(acc_matrix)
-        #
         zs = np.add(multiplied, bias)
         activations = NeuralNetworkMath.sigmoid(zs)
         return activations
@@ -63,7 +65,6 @@ class NeuralNetwork:
         bias_deltas_matrices = [deltas]
         for layer in reversed(range(self.n_hidden_layers)):
             weight_matrix = self.weight_matrices[layer+1]
-            bias_matrix = self.bias_weights_matrices[layer+1]
             activation = activations[layer]
             deltas = NeuralNetworkMath.delta(activation,
                                              weight_matrix,
@@ -77,16 +78,12 @@ class NeuralNetwork:
         self.bias_deltas = bias_deltas_matrices
 
     def update_weights(self, old_weights=[], gradients_matrices=[], alpha=0.1):
-        print("OLD", old_weights)
-        print("NEW", gradients_matrices)
         alpha_gradients = list(map(lambda matrix: np.multiply(matrix, alpha), gradients_matrices))
-
         new_weights_matrices = NeuralNetworkMath.matrix_list_operation(
             np.subtract,
             old_weights,
             alpha_gradients
         )
-
         return new_weights_matrices
 
     def train(self, training_dataset):
@@ -159,6 +156,7 @@ class NeuralNetwork:
         return self.n_layers-1
 
     def array_to_matrix(self, array=[]):
+        print("ARRAY", array)
         return list(map(lambda inp: [inp], array))
 
     def numerical_verifier(self, epsilon, gradients=[], expected_outputs=[]):
