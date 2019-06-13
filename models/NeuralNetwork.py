@@ -7,7 +7,9 @@ from models.NeuralNetworkMath import NeuralNetworkMath
 
 class NeuralNetwork:
     def __init__(self, hyper_parameters, training_set, debug=False):
-        layers_n_neurons = hyper_parameters["layers_structure"]
+        n_inputs = len(training_set.get_attr_names())
+        n_outputs = len(training_set.get_uniq_classes())
+        layers_n_neurons = [n_inputs] + hyper_parameters["layers_structure"] + [n_outputs]
         self.training_set = training_set
         self.debug = debug
         self.layer_neurons = layers_n_neurons

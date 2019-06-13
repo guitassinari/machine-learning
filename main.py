@@ -67,7 +67,8 @@ def run():
     best_hyper_parameter = hyper_parameters_list[best_hyper_parameter_index]
     print(best_hyper_parameter)
 
-    LineChart([performance_indexes])
+    layer_structures = list(map(lambda hp: hp["layers_structure"], hyper_parameters_list))
+    LineChart([performance_indexes], layer_structures)
     LineChart.show_charts()
 
 
