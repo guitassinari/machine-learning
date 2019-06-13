@@ -21,7 +21,6 @@ class NeuralNetworkMath:
         https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html
         """
         # logaritmo natural das predições
-        # expected_outputs representa todos os neuroios de saida???
         ln_real_outputs = list(map(np.log, real_outputs))
         multiplied = np.multiply(ln_real_outputs, expected_outputs)
         return -sum(multiplied)
@@ -88,3 +87,46 @@ class NeuralNetworkMath:
             result = operator(matrix_a, matrix_b)
             results.append(result)
         return results
+
+    @classmethod
+    def numerical_verifier(cls, weights_matrices=[], epsilon=0.1, expected_outputs=[]):
+        # J(T1 -epsilon, T2,...) - J(t1+epsilon, T2,...)
+        # _______________________________________________
+        #                   2*epsilon
+
+        # funcionalidade que permita, via linha de comando,
+        # efetuar a verificação numérica do gradiente,
+        # a fim de checar a corretude da implementação de cada grupo;
+        print(expected_outputs)
+        weights_minus = list(map(lambda matrix: np.subtract(matrix, epsilon), weights_matrices[:]))
+        weights_plus = list(map(lambda matrix: np.add(matrix, epsilon), weights_matrices[:]))
+
+        minus_loss = cls.loss(weights_minus, expected_outputs)
+        plus_loss = cls.loss(weights_plus, expected_outputs)
+
+        numerical_grad = (minus_loss - plus_loss) / (2*epsilon)
+        print(numerical_grad)
+        return numerical_grad
+
+    @classmethod
+    def array_to_matrix(cls, array=[]):
+        return list(map(lambda inp: [inp], array))
+
+    @classmethod
+    def activation_for(cls, inputs=[], weights=[], bias=[]):
+        multiplied = weights.dot(inputs)
+        zs = np.add(multiplied, bias)
+        return NeuralNetworkMath.sigmoid(zs)
+
+    @classmethod
+    def all_activations_for(cls, inputs=[], weights_matrices=[], bias_matrices=[]):
+        activations = []
+        accumulator = inputs
+        for layer in range(len(weights_matrices)):
+            weights = weights_matrices[layer]
+            bias = bias_matrices[layer]
+            accumulator = NeuralNetworkMath.activation_for(inputs=accumulator,
+                                                           weights=weights,
+                                                           bias=bias)
+            activations.append(accumulator)
+        return activations

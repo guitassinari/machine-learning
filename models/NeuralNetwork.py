@@ -26,7 +26,7 @@ class NeuralNetwork:
 
     def predict(self, example):
         """
-        :param features:
+        :param example:
         :return:
         """
         features = example.get_body()
@@ -35,26 +35,15 @@ class NeuralNetwork:
         return self.training_set.get_uniq_classes()[max_index]
 
     def outputs(self, inputs=[]):
-        features_matrix = self.array_to_matrix(inputs)
+        features_matrix = NeuralNetworkMath.array_to_matrix(inputs)
         accumulator = np.array(features_matrix).astype(np.float)
         # Multiplica todas as matrizes, (entrada x pesos) + bias.
         # Forward propagation
-        last_activations = []
 
-        for layer_i in range(self.n_layers-1):
-            accumulator = self.hidden_activation(accumulator, layer_i)
-            last_activations.append(accumulator)
-
-        self.last_activations = last_activations
+        self.last_activations = NeuralNetworkMath.all_activations_for(inputs=accumulator,
+                                                                      weights_matrices=self.weight_matrices,
+                                                                      bias_matrices=self.bias_weights_matrices)
         return accumulator
-
-    def hidden_activation(self, acc_matrix=[], layer=0):
-        weights = self.weight_matrices[layer]
-        bias = self.bias_weights_matrices[layer]
-        multiplied = weights.dot(acc_matrix)
-        zs = np.add(multiplied, bias)
-        activations = NeuralNetworkMath.sigmoid(zs)
-        return activations
 
     def back_propagate(self, expected_outputs=[], activations=[]):
         last_activation = activations[-1]
@@ -155,37 +144,9 @@ class NeuralNetwork:
     def last_layer_index(self):
         return self.n_layers-1
 
-    def array_to_matrix(self, array=[]):
-        print("ARRAY", array)
-        return list(map(lambda inp: [inp], array))
-
-    def numerical_verifier(self, epsilon, gradients=[], expected_outputs=[]):
-        # J(T1 -epsilon, T2,...) - J(t1+epsilon, T2,...)
-        # _______________________________________________
-        #                   2*epsilon
-
-        # funcionalidade que permita, via linha de comando,
-        # efetuar a verificação numérica do gradiente,
-        # a fim de checar a corretude da implementação de cada grupo;
-        numerical_grad = 0
-        weights_minus = self.weights_matrices[:]  # coloa a matrix inteira para variavel
-        weights_plus = self.weights_matrices[:]
-        for index in weights_plus:
-            weights_minus[index] -= epsilon
-            weights_plus[index] += epsilon
-            numerical_grad = (self.loss(weights_plus, expected_outputs) - self.loss(weights_minus, expected_outputs)) / (2*epsilon)
-            # Ideia aqui e printar duas colunas lado a lado
-            # A primeira sera o valor calculado pela rede
-            # A segunda o valor aproximado numericamente
-
-            # Se der tempo vamos mostrar graficamente o diferenca
-            # print("Gradients: " gradients[row,col], numerical_grad[row,col])
-        return
-
     def momentum(self, momentum_term, iterator, gradients=[]):
         weight_moments = []
         weight_moments[iterator] = (momentum_term * self.weight_moments) + gradients
-
 
     def update_momentum(self, iterator, weights_moments=[]):
         return self.weights_matrices[iterator] - (self.alpha * self.weights_moments[iterator])
