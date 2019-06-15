@@ -23,8 +23,14 @@ class NeuralNetworkMath:
         """
         # logaritmo natural das predições
         ln_real_outputs = list(map(np.log, real_outputs))
-        multiplied = np.multiply(ln_real_outputs, expected_outputs)
-        return -sum(multiplied)
+        first_factor = - (np.multiply(expected_outputs, ln_real_outputs))
+
+        real_outputs_minus_1 = np.subtract(1, real_outputs)
+        ln_real_outputs_minus_1 = list(map(np.log, real_outputs_minus_1))
+        one_minus_expected_outputs = np.subtract(1, expected_outputs)
+        second_factor = - (np.multiply(one_minus_expected_outputs, ln_real_outputs_minus_1))
+
+        return np.sum(np.add(first_factor, second_factor))
 
     @classmethod
     def loss_regularization(cls, weights_matrices=[], _lambda=0.1, n_examples=1):
@@ -135,7 +141,17 @@ class NeuralNetworkMath:
 
     @classmethod
     def example_expected_output(cls, example, dataset):
-        possible_classes = dataset.get_uniq_classes()
         example_class = example.get_class()
+        if cls.is_number(example_class):
+            return [[float(example_class)]]
+        else:
+            possible_classes = dataset.get_uniq_classes()
+            return list(map(lambda klass: [1] if klass == example_class else [0], possible_classes))
 
-        return list(map(lambda klass: [1] if klass == example_class else [0], possible_classes))
+    @classmethod
+    def is_number(cls, string):
+        try:
+            float(string)
+            return True
+        except ValueError:
+            return False
