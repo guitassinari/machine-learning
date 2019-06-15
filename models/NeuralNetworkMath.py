@@ -115,7 +115,8 @@ class NeuralNetworkMath:
 
     @classmethod
     def activation_for(cls, inputs=[], weights=[], bias=[]):
-        multiplied = weights.dot(inputs)
+        np_weights = np.array(weights)
+        multiplied = np_weights.dot(inputs)
         zs = np.add(multiplied, bias)
         return NeuralNetworkMath.sigmoid(zs)
 
@@ -131,3 +132,10 @@ class NeuralNetworkMath:
                                                            bias=bias)
             activations.append(accumulator)
         return activations
+
+    @classmethod
+    def example_expected_output(cls, example, dataset):
+        possible_classes = dataset.get_uniq_classes()
+        example_class = example.get_class()
+
+        return list(map(lambda klass: [1] if klass == example_class else [0], possible_classes))

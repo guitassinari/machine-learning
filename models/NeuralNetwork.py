@@ -38,7 +38,7 @@ class NeuralNetwork:
         return self.training_set.get_uniq_classes()[max_index]
 
     def outputs(self, inputs=[]):
-        features_matrix = NeuralNetworkMath.array_to_matrix(inputs)
+        features_matrix = NeuralNetworkMath.array_to_matrix([inputs])
         accumulator = np.array(features_matrix).astype(np.float)
         # Multiplica todas as matrizes, (entrada x pesos) + bias.
         # Forward propagation
@@ -89,7 +89,7 @@ class NeuralNetwork:
             example = training_dataset.get_example_at(example_index)
             inputs = example.get_body()
             inputs = np.array(inputs).astype(np.float).tolist()
-            expected_outputs = self.example_expected_output(example, self.training_set)
+            expected_outputs = NeuralNetworkMath.example_expected_output(example, self.training_set)
             outputs = self.outputs(inputs)
             self.back_propagate(expected_outputs=expected_outputs,
                                 activations=self.last_activations)
@@ -153,9 +153,3 @@ class NeuralNetwork:
 
     def update_momentum(self, iterator, weights_moments=[]):
         return self.weights_matrices[iterator] - (self.alpha * self.weights_moments[iterator])
-
-    def example_expected_output(self, example, dataset):
-        possible_classes = dataset.get_uniq_classes()
-        example_class = example.get_class()
-
-        return list(map(lambda klass: [1] if klass == example_class else [0], possible_classes))

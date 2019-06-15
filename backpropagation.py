@@ -5,6 +5,8 @@ from data.DatasetFile import DatasetFile
 from data.NetworkStructure import NetworkStructure
 from data.InitialWeights import InitialWeights
 from models.NeuralNetwork import NeuralNetwork
+from models.NeuralNetworkMath import NeuralNetworkMath
+
 import argparse
 
 parser = argparse.ArgumentParser(description='Process some integers.')
@@ -39,7 +41,7 @@ def run():
 
 
     print("------------ LENDO LAMBDA E ESTRUTURA DA REDE --------------\n")
-    _lambda, layers = NetworkStructure(network_file_path).read()
+    layers, _lambda = NetworkStructure(network_file_path).read()
     print("LAMBDA", _lambda)
     print("LAYERS", layers)
     print("\n")
@@ -54,14 +56,33 @@ def run():
     dataset = DatasetFile(dataset_file_path, class_position).read()
     examples = dataset.get_examples()
 
+    print("--------------------- Calculando Erro -----------------\n")
     for example_index in range(len(examples)):
         example = examples[example_index]
+        float_input = list(map(lambda string_attr: float(string_attr), example.get_body()))
         print("Exemplo", example_index)
-        print("x: ", example.get_body())
+        print("x: ", float_input)
         print("y: ", example.get_class())
-        print("\n")
+        expected_output = NeuralNetworkMath.example_expected_output(example, dataset)
+        print("Expected y:", expected_output)
+        all_activations = NeuralNetworkMath.all_activations_for(inputs=[float_input],
+                                                                weights_matrices=weights,
+                                                                bias_matrices=bias)
+        real_output = all_activations[-1]
+        print("Got y:", real_output)
 
-    print("\n")
+        print("")
+        print("ACTIVATIONS:")
+        for activation in all_activations:
+            print(activation)
+
+        print("")
+        cost = NeuralNetworkMath.loss(real_output, expected_output)
+        print("COST: ", cost)
+        print("")
+
+
+
 
 
 
