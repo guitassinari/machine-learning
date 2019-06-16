@@ -194,3 +194,13 @@ class NeuralNetworkMath:
             bias_deltas_matrices.insert(0, next_layer_delta.tolist())
             deltas_matrices.insert(0, next_layer_delta.tolist())
         return deltas_matrices, bias_deltas_matrices
+
+    @classmethod
+    def update_weights(cls, old_weights=[], gradients_matrices=[], alpha=0.1):
+        alpha_gradients = list(map(lambda matrix: np.multiply(matrix, alpha), gradients_matrices))
+        new_weights_matrices = NeuralNetworkMath.matrix_list_operation(
+            np.subtract,
+            old_weights,
+            alpha_gradients
+        )
+        return new_weights_matrices
