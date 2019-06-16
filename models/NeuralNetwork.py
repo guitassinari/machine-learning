@@ -6,7 +6,7 @@ from models.NeuralNetworkMath import NeuralNetworkMath
 
 
 class NeuralNetwork:
-    def __init__(self, hyper_parameters, training_set, debug=False):
+    def __init__(self, hyper_parameters, training_set, initial_weights=None, debug=False):
         n_inputs = len(training_set.get_attr_names())
         if training_set.class_data_type() == float:
             n_outputs = 1
@@ -25,6 +25,8 @@ class NeuralNetwork:
         self.last_activations = []
         self.alpha = hyper_parameters["alpha"] or 0.1
         self.build_neurons()
+        if initial_weights is not None:
+            self.weight_matrices = initial_weights
         self.train(training_set)
 
     def predict(self, example):

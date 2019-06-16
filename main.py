@@ -5,8 +5,6 @@ from model_training.CrossValidation import CrossValidation
 from charts.LineChart import LineChart
 from data.DatasetFile import DatasetFile
 from data.HyperParametersFile import HyperParametersFile
-from data.NetworkStructure import NetworkStructure
-from data.InitialWeights import InitialWeights
 import numpy as np
 import argparse
 import importlib
@@ -41,7 +39,6 @@ def run():
     network_file_path = args.network
     weights_file_path = args.weights
 
-
     model_name = args.model_name[0]
     module = importlib.import_module("models."+model_name)
     model_class = getattr(module, model_name)
@@ -55,9 +52,6 @@ def run():
     print("Initial weights path:", weights_file_path)
     print("\n")
     dataset = DatasetFile(dataset_file_path, class_position).read()
-    network = NetworkStructure(network_file_path).read()
-    weights = InitialWeights(weights_file_path).read()
-
 
     hyper_parameters_list = HyperParametersFile(hyper_parameters_file_path).read()
     cv = CrossValidation(hyper_parameters_list, model_class, cv_divisions, dataset)

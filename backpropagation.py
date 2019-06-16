@@ -4,8 +4,8 @@
 from data.DatasetFile import DatasetFile
 from data.NetworkStructure import NetworkStructure
 from data.InitialWeights import InitialWeights
-from models.NeuralNetwork import NeuralNetwork
 from models.NeuralNetworkMath import NeuralNetworkMath
+import numpy as np
 
 import argparse
 
@@ -88,6 +88,7 @@ def run():
 
     print("------------ BACKPROPAGATING ------------------------\n")
 
+    all_gradients = []
     for example_index in range(len(examples)):
         example = examples[example_index]
         float_input = list(map(lambda string_attr: float(string_attr), example.get_body()))
@@ -102,6 +103,7 @@ def run():
 
         gradients = NeuralNetworkMath.all_gradients(activations_matrices=all_activations,
                                                     deltas_matrices=deltas)
+        all_gradients.append(gradients)
 
         print("Exemplo", example_index+1)
 
@@ -123,11 +125,35 @@ def run():
 
         print("\n")
 
-    nn = NeuralNetwork({
-        "layers_structure": layers[1:-1],
-        "lambda": _lambda,
-        "alpha": 0.01,
-        "batch_size": 1
-    }, dataset)
+    gradient_regularization = NeuralNetworkMath.gradients_regularization(
+        weights_matrices=weights,
+        _lambda=_lambda)
+
+    gradient_sum = []
+    for index in range(len(all_gradients)):
+        if index == 0:
+            gradient_sum = all_gradients[0]
+        else:
+            gradient_sum = NeuralNetworkMath.matrix_list_operation(
+                np.add,
+                gradient_sum,
+                all_gradients[index]
+            )
+
+    sum_with_regularization = NeuralNetworkMath.matrix_list_operation(
+        np.add,
+        gradient_sum,
+        gradient_regularization
+    )
+
+    regularized_gradients = list(map(lambda matrix: np.divide(matrix, len(examples)), sum_with_regularization))
+
+    print("Regularized Gradients")
+    for index in range(len(regularized_gradients)):
+        print(tab(4), "Theta", index + 1)
+
+        theta_gradient = regularized_gradients[index]
+        for gradient_matrix in theta_gradient:
+            print(tab(6), gradient_matrix)
 
 run()
