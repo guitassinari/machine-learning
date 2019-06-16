@@ -61,8 +61,6 @@ def run():
     examples = dataset.get_examples()
 
     print("------------ CALCULANDO ERRO / CUSTO -----------------\n")
-    all_examples_activations = []
-    expected_outputs = []
     for example_index in range(len(examples)):
         example = examples[example_index]
         float_input = list(map(lambda string_attr: float(string_attr), example.get_body()))
@@ -101,12 +99,19 @@ def run():
         deltas, bias_deltas = NeuralNetworkMath.calculate_deltas(weights_matrices=weights,
                                                                  expected_outputs=expected_output,
                                                                  activations=all_activations)
+
+        gradients = NeuralNetworkMath.all_gradients(activations_matrices=all_activations,
+                                                    deltas_matrices=deltas)
+
         print("Exemplo", example_index)
         print(tab(2), "Deltas")
         print(tab(4), deltas)
 
         print(tab(2), "Deltas Bias")
         print(tab(4), bias_deltas)
+
+        print(tab(2), "Gradients")
+        print(tab(4), gradients)
         print("\n")
 
 

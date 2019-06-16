@@ -90,8 +90,9 @@ class NeuralNetwork:
             inputs = np.array(inputs).astype(np.float).tolist()
             expected_outputs = NeuralNetworkMath.example_expected_output(example, self.training_set)
             outputs = self.outputs(inputs)
-            deltas, bias_deltas = self.calculate_deltas(expected_outputs=expected_outputs,
-                                                        activations=self.last_activations)
+            deltas, bias_deltas = NeuralNetworkMath.calculate_deltas(weights_matrices=self.weight_matrices,
+                                                                     expected_outputs=expected_outputs,
+                                                                     activations=self.last_activations)
             self.deltas = deltas
             self.bias_deltas = bias_deltas
             input_and_activations = [inputs] + self.last_activations
@@ -112,7 +113,7 @@ class NeuralNetwork:
             # fim do batch ou último exemplo
             if batch_counter == self.batch_size or example_index == n_examples:
                 batch_counter = 0
-                regularization = NeuralNetworkMath.gradient_regularization(
+                regularization = NeuralNetworkMath.gradients_regularization(
                     weights_matrices=self.weight_matrices,
                     _lambda=self._lambda
                 )
