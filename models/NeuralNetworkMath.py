@@ -44,8 +44,10 @@ class NeuralNetworkMath:
     def gradients_regularization(cls, _lambda=0.1, weights_matrices=[]):
         regularization = []
         for matrix in weights_matrices:
-            regularization.append(cls.gradient_regularization(weight_matrix=matrix,
-                                                              _lambda=_lambda))
+            reg_matrix = cls.gradient_regularization(
+                weight_matrix=matrix,
+                _lambda=_lambda)
+            regularization.append(reg_matrix)
         return regularization
 
     @classmethod
@@ -180,7 +182,7 @@ class NeuralNetworkMath:
         deltas = cls.output_delta(expected_output=expected_outputs, output=output_activation)
         deltas_matrices = [deltas.tolist()]
         last_delta = deltas.copy()
-        # deltas do bias são os próprios deltas da camada seguinte. (A12S101)
+        # deltas do bias são os prif training_set.class_data_type() == float oróprios deltas da camada seguinte. (A12S101)
         bias_deltas_matrices = [deltas.tolist()]
         for layer in reversed(range(len(weights_matrices)-1)):
             weight_matrix = weights_matrices[layer + 1]

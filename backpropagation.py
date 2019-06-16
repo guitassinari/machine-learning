@@ -88,7 +88,6 @@ def run():
 
     print("------------ BACKPROPAGATING ------------------------\n")
 
-    regularized_gradients = []
     for example_index in range(len(examples)):
         example = examples[example_index]
         float_input = list(map(lambda string_attr: float(string_attr), example.get_body()))
@@ -103,12 +102,6 @@ def run():
 
         gradients = NeuralNetworkMath.all_gradients(activations_matrices=all_activations,
                                                     deltas_matrices=deltas)
-
-        reg_gradients = NeuralNetworkMath.regularized_gradients(activation_matrices=all_activations,
-                                                                        deltas_matrices=deltas,
-                                                                        weights_matrices=weights,
-                                                                        _lambda=_lambda)
-        regularized_gradients.append(reg_gradients)
 
         print("Exemplo", example_index+1)
 
@@ -129,5 +122,12 @@ def run():
                 print(tab(6), gradient_matrix)
 
         print("\n")
+
+    nn = NeuralNetwork({
+        "layers_structure": layers[1:-1],
+        "lambda": _lambda,
+        "alpha": 0.01,
+        "batch_size": 1
+    }, dataset)
 
 run()

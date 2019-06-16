@@ -63,7 +63,7 @@ def run():
     cv = CrossValidation(hyper_parameters_list, model_class, cv_divisions, dataset)
 
     performance_indexes = cv.get_performance_indexes()
-    best_hyper_parameter_index = performance_indexes.index(np.min(performance_indexes))
+    best_hyper_parameter_index = performance_indexes.index(np.max(performance_indexes))
     best_hyper_parameter = hyper_parameters_list[best_hyper_parameter_index]
     print(best_hyper_parameter)
 

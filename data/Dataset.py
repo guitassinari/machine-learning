@@ -1,5 +1,6 @@
 from sklearn.utils import resample
 import numpy as np
+from models.NeuralNetworkMath import NeuralNetworkMath
 
 class Dataset:
     """Classe que engloba um Dataset (lista de instâncias / Examples)
@@ -76,6 +77,13 @@ class Dataset:
         ["sim", "nao"]
         """
         return self.possible_classes.copy()
+
+    def class_data_type(self):
+        klass = self.possible_classes[0]
+        if NeuralNetworkMath.is_number(klass):
+            return float
+        else:
+            return str
 
     def get_uniq_attr_values(self, attr_name):
         """
