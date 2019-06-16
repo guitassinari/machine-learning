@@ -42,5 +42,5 @@ def test_hidden_activations():
 def test_backpropagate():
     nn = NeuralNetwork(parameters, dataset, debug=True)
 
-    nn.back_propagate([0])
+    nn.calculate_deltas([0])
     assert nn.deltas[2][0] == [0.9605766589005886]

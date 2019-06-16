@@ -26,6 +26,10 @@ parser.add_argument("weights",
                     help="Neural network starting weights file path")
 parser.add_argument("dataset", help="dataset file path")
 
+
+def tab(num_tab):
+    return " " * num_tab
+
 def run():
     args = parser.parse_args()
     dataset_file_path = args.dataset
@@ -56,35 +60,54 @@ def run():
     dataset = DatasetFile(dataset_file_path, class_position).read()
     examples = dataset.get_examples()
 
-    print("--------------------- Calculando Erro -----------------\n")
+    print("------------ CALCULANDO ERRO / CUSTO -----------------\n")
+    all_examples_activations = []
+    expected_outputs = []
     for example_index in range(len(examples)):
         example = examples[example_index]
         float_input = list(map(lambda string_attr: float(string_attr), example.get_body()))
         print("Exemplo", example_index)
-        print("x: ", float_input)
-        print("y: ", example.get_class())
+        print(tab(2), "x: ", float_input)
+        print(tab(2), "y: ", example.get_class())
         expected_output = NeuralNetworkMath.example_expected_output(example, dataset)
-        print("Expected y:", expected_output)
+        print(tab(2), "Expected y:", expected_output)
         all_activations = NeuralNetworkMath.all_activations_for(inputs=[float_input],
                                                                 weights_matrices=weights,
                                                                 bias_matrices=bias)
         real_output = all_activations[-1]
-        print("Got y:", real_output)
+        print(tab(2), "Got y:", real_output)
 
         print("")
         print("ACTIVATIONS:")
         for activation in all_activations:
-            print(activation)
+            print(tab(2), activation)
 
         print("")
         cost = NeuralNetworkMath.loss(real_output, expected_output)
-        print("COST: ", cost)
+        print("COST:")
+        print(tab(2), cost)
         print("")
 
+    print("------------ BACKPROPAGATING ------------------------\n")
 
+    for example_index in range(len(examples)):
+        example = examples[example_index]
+        float_input = list(map(lambda string_attr: float(string_attr), example.get_body()))
+        expected_output = NeuralNetworkMath.example_expected_output(example, dataset)
+        all_activations = NeuralNetworkMath.all_activations_for(inputs=[float_input],
+                                                                weights_matrices=weights,
+                                                                bias_matrices=bias)
 
+        deltas, bias_deltas = NeuralNetworkMath.calculate_deltas(weights_matrices=weights,
+                                                                 expected_outputs=expected_output,
+                                                                 activations=all_activations)
+        print("Exemplo", example_index)
+        print(tab(2), "Deltas")
+        print(tab(4), deltas)
 
-
+        print(tab(2), "Deltas Bias")
+        print(tab(4), bias_deltas)
+        print("\n")
 
 
 run()

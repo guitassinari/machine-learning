@@ -48,7 +48,7 @@ class NeuralNetwork:
                                                                       bias_matrices=self.bias_weights_matrices)
         return self.last_activations[-1]
 
-    def back_propagate(self, expected_outputs=[], activations=[]):
+    def calculate_deltas(self, weights_matrices=[], expected_outputs=[], activations=[]):
         last_activation = activations[-1]
         deltas = NeuralNetworkMath.output_delta(expected_outputs, last_activation)
         deltas_matrices = [deltas]
@@ -56,7 +56,7 @@ class NeuralNetwork:
         # deltas do bias são os próprios deltas da camada seguinte. (A12S101)
         bias_deltas_matrices = [deltas]
         for layer in reversed(range(self.n_hidden_layers)):
-            weight_matrix = self.weight_matrices[layer+1]
+            weight_matrix = weights_matrices[layer+1]
             activation = activations[layer]
             deltas = NeuralNetworkMath.delta(activation,
                                              weight_matrix,
@@ -66,8 +66,7 @@ class NeuralNetwork:
             # deltas do bias são os próprios deltas da camada seguinte. (A12S101)
             bias_deltas_matrices.insert(0, deltas)
             deltas_matrices.insert(0, deltas)
-        self.deltas = deltas_matrices
-        self.bias_deltas = bias_deltas_matrices
+        return deltas_matrices, bias_deltas_matrices
 
     def update_weights(self, old_weights=[], gradients_matrices=[], alpha=0.1):
         alpha_gradients = list(map(lambda matrix: np.multiply(matrix, alpha), gradients_matrices))
@@ -91,8 +90,10 @@ class NeuralNetwork:
             inputs = np.array(inputs).astype(np.float).tolist()
             expected_outputs = NeuralNetworkMath.example_expected_output(example, self.training_set)
             outputs = self.outputs(inputs)
-            self.back_propagate(expected_outputs=expected_outputs,
-                                activations=self.last_activations)
+            deltas, bias_deltas = self.calculate_deltas(expected_outputs=expected_outputs,
+                                                        activations=self.last_activations)
+            self.deltas = deltas
+            self.bias_deltas = bias_deltas
             input_and_activations = [inputs] + self.last_activations
             new_gradients = NeuralNetworkMath\
                 .all_gradients(activations_matrices=input_and_activations,

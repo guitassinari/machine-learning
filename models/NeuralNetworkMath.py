@@ -155,3 +155,24 @@ class NeuralNetworkMath:
             return True
         except ValueError:
             return False
+
+    @classmethod
+    def calculate_deltas(cls, weights_matrices=[], expected_outputs=[], activations=[]):
+        output_activation = activations[-1]
+        deltas = cls.output_delta(expected_output=expected_outputs, output=output_activation)
+        deltas_matrices = [deltas.tolist()]
+        last_delta = deltas.copy()
+        # deltas do bias são os próprios deltas da camada seguinte. (A12S101)
+        bias_deltas_matrices = [deltas.tolist()]
+        for layer in reversed(range(len(weights_matrices)-1)):
+            weight_matrix = weights_matrices[layer + 1]
+            activation = activations[layer]
+            next_layer_delta = NeuralNetworkMath.delta(activation,
+                                                       weight_matrix,
+                                                       last_delta)
+            last_delta = next_layer_delta
+
+            # deltas do bias são os próprios deltas da camada seguinte. (A12S101)
+            bias_deltas_matrices.insert(0, next_layer_delta.tolist())
+            deltas_matrices.insert(0, next_layer_delta.tolist())
+        return deltas_matrices, bias_deltas_matrices
