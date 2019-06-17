@@ -5,6 +5,7 @@ from data.DatasetFile import DatasetFile
 from data.NetworkStructure import NetworkStructure
 from data.InitialWeights import InitialWeights
 from models.NeuralNetworkMath import NeuralNetworkMath
+import copy
 import numpy as np
 
 import argparse
@@ -61,6 +62,8 @@ def run():
     examples = dataset.get_examples()
 
     print("------------ CALCULANDO ERRO / CUSTO -----------------\n")
+    # weights_static = copy.deepcopy(weights)
+
     for example_index in range(len(examples)):
         example = examples[example_index]
         float_input = list(map(lambda string_attr: float(string_attr), example.get_body()))
@@ -85,6 +88,10 @@ def run():
         print("COST:")
         print(tab(2), cost)
         print("")
+        # print("WEIGHTS MATRICES!", weights)
+        # print("WEIGHTS STATIC OUT", weights_static)
+        print("NUMERICAL VERIFICATION")
+        NeuralNetworkMath.numerical_verifier(float_input, weights, bias, 1e-07, expected_output)
 
     print("------------ BACKPROPAGATING ------------------------\n")
 

@@ -2,7 +2,7 @@
 
 import numpy as np
 from itertools import zip_longest
-
+import copy
 
 class NeuralNetworkMath:
     def __init__(self):
@@ -118,23 +118,65 @@ class NeuralNetworkMath:
         return results
 
     @classmethod
-    def numerical_verifier(cls, weights_matrices=[], epsilon=0.1, expected_outputs=[]):
-        # J(T1 -epsilon, T2,...) - J(t1+epsilon, T2,...)
-        # _______________________________________________
-        #                   2*epsilon
+    def numerical_verifier(cls, float_input, weights_matrices=[], bias_weights=[], epsilon=1e-07, expected_output=[]):
+        numerical_grad_matrix = []
+        verified_weights_matrices = []
+        weights_static = copy.deepcopy(weights_matrices)
 
-        # funcionalidade que permita, via linha de comando,
-        # efetuar a verificação numérica do gradiente,
-        # a fim de checar a corretude da implementação de cada grupo;
-        weights_minus = list(map(lambda matrix: np.subtract(matrix, epsilon), weights_matrices[:]))
-        weights_plus = list(map(lambda matrix: np.add(matrix, epsilon), weights_matrices[:]))
+        for weight_matrix_index in range(len(weights_matrices)):
+            weight_matrix = weights_matrices[weight_matrix_index]
+            verified_weight_matrix = []
 
-        minus_loss = cls.loss(weights_minus, expected_outputs)
-        plus_loss = cls.loss(weights_plus, expected_outputs)
+            for line_index in range(len(weight_matrix)):
+                line = weight_matrix[line_index]
+                verified_line = []
 
-        numerical_grad = (minus_loss - plus_loss) / (2*epsilon)
-        return numerical_grad
+                for theta_index in range(len(line)):
+                    theta = line[theta_index]
+                    plus_weights = copy.deepcopy(weights_matrices)
+                    minus_weights = copy.deepcopy(weights_matrices)
+                    minus_theta = theta - epsilon
+                    plus_theta = theta + epsilon
 
+                    # print("plus th", plus_theta)
+                    # print("minus th", minus_theta)
+
+                    plus_weights[weight_matrix_index][line_index][theta_index] = plus_theta
+                    minus_weights[weight_matrix_index][line_index][theta_index] = minus_theta
+
+                    # print("plus", plus_weights)
+                    # print("minus", minus_weights)
+
+                    forward_plus = NeuralNetworkMath.all_activations_for(inputs=[float_input],
+                                                                            weights_matrices=plus_weights,
+                                                                          bias_matrices=bias_weights)
+                    forward_minus = NeuralNetworkMath.all_activations_for(inputs=[float_input],
+                                                                            weights_matrices=minus_weights,
+                                                                            bias_matrices=bias_weights)
+
+                    #print("fw plus", forward_plus)
+                    #print("fw minus",forward_minus)
+
+                    # (T1 + e)
+
+                    real_output_plus = forward_plus[-1]
+                    real_output_minus = forward_minus[-1]
+
+                    #print("r out plus", forward_plus)
+                    #print("r out minus", forward_minus)
+
+                    cost_plus = NeuralNetworkMath.loss(real_output_plus, expected_output)
+                    cost_minus = NeuralNetworkMath.loss(real_output_minus, expected_output)
+
+                    #print("cost plus", cost_plus)
+                    #print("cost minus", cost_minus)
+
+                    grad_approx = (cost_plus - cost_minus) / (2 * epsilon)
+                    numerical_grad_matrix.append(grad_approx)
+
+        print("numerical_grad", numerical_grad_matrix)
+        return numerical_grad_matrix
+        
     @classmethod
     def array_to_matrix(cls, array=[]):
         return list(map(lambda inp: [inp], array))
