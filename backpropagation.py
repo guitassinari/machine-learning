@@ -91,7 +91,14 @@ def run():
         # print("WEIGHTS MATRICES!", weights)
         # print("WEIGHTS STATIC OUT", weights_static)
         print("NUMERICAL VERIFICATION")
-        NeuralNetworkMath.numerical_verifier(float_input, weights, bias, 1e-07, expected_output)
+        numerical_grad_matrix = NeuralNetworkMath.numerical_verifier(float_input, weights, bias, 1e-07, expected_output)
+
+        print(tab(2), "Gradient Verification...")
+        print("For example", example_index+1)
+        for index in range(len(numerical_grad_matrix)):
+            print(tab(4), "Theta", index+1)
+            print(tab(6), numerical_grad_matrix[index])
+        print("----------------")
 
     print("------------ BACKPROPAGATING ------------------------\n")
 
@@ -131,6 +138,13 @@ def run():
                 print(tab(6), gradient_matrix)
 
         print("\n")
+
+
+
+
+
+        # print("Real gradient", real, "Numerical Gradiente", numerical_grad_matrix )
+
 
     gradient_regularization = NeuralNetworkMath.gradients_regularization(
         weights_matrices=weights,

@@ -174,9 +174,9 @@ class NeuralNetworkMath:
                     grad_approx = (cost_plus - cost_minus) / (2 * epsilon)
                     numerical_grad_matrix.append(grad_approx)
 
-        print("numerical_grad", numerical_grad_matrix)
+        # print("numerical_grad", numerical_grad_matrix)
         return numerical_grad_matrix
-        
+
     @classmethod
     def array_to_matrix(cls, array=[]):
         return list(map(lambda inp: [inp], array))
