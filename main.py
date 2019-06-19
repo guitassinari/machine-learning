@@ -8,7 +8,8 @@ from data.HyperParametersFile import HyperParametersFile
 import numpy as np
 import argparse
 import importlib
-
+import time
+start_time = time.time()
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument("dataset", help="dataset file path")
 parser.add_argument("parameters", help="hyper parameters file path")
@@ -60,10 +61,12 @@ def run():
     best_hyper_parameter_index = performance_indexes.index(np.max(performance_indexes))
     best_hyper_parameter = hyper_parameters_list[best_hyper_parameter_index]
     print(best_hyper_parameter)
-
+    print("--- %s seconds ---" % (time.time() - start_time))
     layer_structures = list(map(lambda hp: hp["layers_structure"], hyper_parameters_list))
-    LineChart([performance_indexes], layer_structures)
+    batch_size = list(map(lambda hp: hp["batch_size"], hyper_parameters_list))
+    alpha = list(map(lambda hp: hp["alpha"], hyper_parameters_list))
+    __lambda = list(map(lambda hp: hp["lambda"], hyper_parameters_list))
+    LineChart([performance_indexes], batch_size)
     LineChart.show_charts()
-
 
 run()

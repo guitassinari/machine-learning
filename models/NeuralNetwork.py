@@ -41,6 +41,7 @@ class NeuralNetwork:
 
     def outputs(self, inputs=[]):
         features_matrix = NeuralNetworkMath.array_to_matrix(inputs)
+        # print("FEAT MATRIX", features_matrix)
         accumulator = np.array(features_matrix).astype(np.float)
         # Multiplica todas as matrizes, (entrada x pesos) + bias.
         # Forward propagation
