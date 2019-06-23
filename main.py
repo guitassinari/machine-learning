@@ -43,7 +43,7 @@ def run():
     cv_divisions = args.cross_validation_folds[0]
     class_position = args.class_position[0]
     ignore_columns = args.ignore_columns
-    norm = args.normalization[0]
+    norm = args.normalization
 
     model_name = args.model_name[0]
     module = importlib.import_module("models."+model_name)
