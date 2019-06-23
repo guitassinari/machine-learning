@@ -43,7 +43,7 @@ def run():
     network_file_path = args.network
     weights_file_path = args.weights
     class_position = args.class_position[0]
-    norm = args.normalization[0]
+    norm = args.normalization
 
     print("\n")
     print("Dataset path:", dataset_file_path)
