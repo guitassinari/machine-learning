@@ -51,7 +51,6 @@ def run():
     print("Initial weights path:", weights_file_path)
     print("\n")
 
-
     print("------------ LENDO LAMBDA E ESTRUTURA DA REDE --------------\n")
     layers, _lambda = NetworkStructure(network_file_path).read()
     print("LAMBDA", _lambda)
