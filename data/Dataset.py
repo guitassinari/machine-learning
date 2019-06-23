@@ -1,5 +1,7 @@
 from sklearn.utils import resample
-
+import numpy as np
+from models.NeuralNetworkMath import NeuralNetworkMath
+from data.Example import Example
 
 class Dataset:
     """Classe que engloba um Dataset (lista de instâncias / Examples)
@@ -77,6 +79,13 @@ class Dataset:
         """
         return self.possible_classes.copy()
 
+    def class_data_type(self):
+        klass = self.possible_classes[0]
+        if NeuralNetworkMath.is_number(klass):
+            return float
+        else:
+            return str
+
     def get_uniq_attr_values(self, attr_name):
         """
         Retorna todos os valores possíveis para o atributo attr_name
@@ -127,8 +136,8 @@ class Dataset:
         Type: Array of [Example]
         Exemplo:
         [
-            Example(nome: "junior", idade: 2, joga: "sim"),
-            Example(nome: "sandy", idade: 5, joga: "nao"),
+            [1]Example(nome: "junior", idade: 2, joga: "sim"),
+            [2]Example(nome: "sandy", idade: 5, joga: "nao"),
         ]
         """
         return self.examples.copy()
@@ -258,3 +267,49 @@ class Dataset:
         :return: o exemplo desejado
         """
         return self.examples[index]
+
+    def data_normalization_math(self, example_instance, max, min):
+        """
+        fornecendo o valor atual do exemplo, o máximo e o mínimo de certo atri,
+        calcula o novo valor para o exemplo do atributo fornecido
+        """
+        new_example = (2*((example_instance - min) / (max - min)))-1
+        return new_example
+
+    def data_normalization(self):
+        """
+        Realiza a normalização dos dados do dataset
+        """
+        # tu vai ter que saber quantos atributos sao???
+        # se forem oito no caso. Entao tu cria um vetor
+        # com oito posicoes para salvar
+        all_examples = self.get_examples()
+
+        """
+        Cria uma matriz onde cada linha é um exemplo, e cada coluna é o valor
+        de um atributo
+        """
+
+        attributes_matrix = list(map(lambda example: np.array(example.get_body()).astype(np.float).tolist(), all_examples))
+
+        """
+        valor mínimo e máximo de cada coluna da matriz, ou seja, o valor
+        mínimo/máximo de cada atributo
+        """
+        vector_min = np.amin(attributes_matrix, axis=0)
+        vector_max = np.amax(attributes_matrix, axis=0)
+
+        normalize_factors_list = np.multiply(2, np.subtract(vector_max, vector_min))
+        normalize_factors_matrix = list(map(lambda factor: factor, normalize_factors_list))
+        normalized_attributes = list(map(lambda example_attrs: np.divide(example_attrs, normalize_factors_matrix), attributes_matrix))
+        normalized_attributes = np.subtract(normalized_attributes, 1)
+
+        new_examples = []
+        for example_index in range(len(normalized_attributes)):
+            normalized_example_atrs = normalized_attributes[example_index].tolist()
+            example_class = all_examples[example_index].get_class()
+            normalized_example_atrs.append(example_class)
+            new_example = Example(self.attr_names, normalized_example_atrs)
+            new_examples.append(new_example)
+
+        self.examples = new_examples

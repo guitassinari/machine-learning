@@ -1,7 +1,8 @@
 # coding: utf-8
 
 import numpy as np
-
+from itertools import zip_longest
+import copy
 
 class NeuralNetworkMath:
     def __init__(self):
@@ -22,8 +23,14 @@ class NeuralNetworkMath:
         """
         # logaritmo natural das predições
         ln_real_outputs = list(map(np.log, real_outputs))
-        multiplied = np.multiply(ln_real_outputs, expected_outputs)
-        return -sum(multiplied)
+        first_factor = - (np.multiply(expected_outputs, ln_real_outputs))
+
+        real_outputs_minus_1 = np.subtract(1, real_outputs)
+        ln_real_outputs_minus_1 = list(map(np.log, real_outputs_minus_1))
+        one_minus_expected_outputs = np.subtract(1, expected_outputs)
+        second_factor = - (np.multiply(one_minus_expected_outputs, ln_real_outputs_minus_1))
+
+        return np.sum(np.add(first_factor, second_factor))
 
     @classmethod
     def loss_regularization(cls, weights_matrices=[], _lambda=0.1, n_examples=1):
@@ -34,12 +41,35 @@ class NeuralNetworkMath:
         return regularization
 
     @classmethod
-    def gradient_regularization(cls):
-        pass
+    def gradients_regularization(cls, _lambda=0.1, weights_matrices=[]):
+        regularization = []
+        for matrix in weights_matrices:
+            reg_matrix = cls.gradient_regularization(
+                weight_matrix=matrix,
+                _lambda=_lambda)
+            regularization.append(reg_matrix)
+        return regularization
 
     @classmethod
-    def gradient(cls):
-        pass
+    def gradient_regularization(cls, _lambda=0.1, weight_matrix=[]):
+        return np.multiply(weight_matrix, _lambda).tolist()
+
+    @classmethod
+    def all_gradients(cls, activations_matrices=[], deltas_matrices=[]):
+        gradients = []
+        for index in range(len(deltas_matrices)):
+            activation_matrix = activations_matrices[index]
+            delta_matrix = deltas_matrices[index]
+            gradient = cls.gradient(activations_matrix=activation_matrix,
+                                    next_layer_deltas_matrix=delta_matrix)
+            gradients.append(gradient)
+        return gradients
+
+    @classmethod
+    def gradient(cls, activations_matrix=[], next_layer_deltas_matrix=[]):
+        transposed_activation = np.array(activations_matrix).transpose()
+        deltas_matrix = np.array(next_layer_deltas_matrix)
+        return deltas_matrix.dot(transposed_activation).tolist()
 
     @classmethod
     def output_delta(cls, output=[], expected_output=[]):
@@ -55,3 +85,145 @@ class NeuralNetworkMath:
         wtf_activation = np.multiply(one_sub_activations, np_activations)
         return np.multiply(weighted_deltas, wtf_activation)
 
+    @classmethod
+    def regularized_gradient(cls,
+                             activation_matrix=[],
+                             deltas_matrix=[],
+                             weights_matrices=[],
+                             _lambda=0.1):
+        gradient = cls.gradient(activations_matrix=activation_matrix,
+                                next_layer_deltas_matrix=deltas_matrix)
+        regularization = cls.gradients_regularization(weights_matrices=weights_matrices,
+                                                      _lambda=_lambda)
+        return cls.matrix_list_operation(np.add, gradient, regularization)
+
+    @classmethod
+    def regularized_gradients(cls,
+                              activation_matrices=[],
+                              deltas_matrices=[],
+                              weights_matrices=[],
+                              _lambda=0.1):
+        gradients = cls.all_gradients(activations_matrices=activation_matrices,
+                                      deltas_matrices=deltas_matrices)
+        reg_matrix = cls.gradients_regularization(_lambda=_lambda,
+                                                  weights_matrices=weights_matrices)
+        return cls.matrix_list_operation(np.add, gradients, reg_matrix)
+
+    @classmethod
+    def matrix_list_operation(cls, operator, list_1=[], list_2=[]):
+        results = []
+        for matrix_a, matrix_b in zip_longest(list_1, list_2):
+            result = operator(matrix_a, matrix_b)
+            results.append(result.tolist())
+        return results
+
+    @classmethod
+    def numerical_verifier(cls, float_input, weights_matrices=[], bias_weights=[], epsilon=1e-07, expected_output=[]):
+        numerical_grad_matrix = []
+
+        for weight_matrix_index in range(len(weights_matrices)):
+            weight_matrix = weights_matrices[weight_matrix_index]
+
+            for line_index in range(len(weight_matrix)):
+                line = weight_matrix[line_index]
+
+                for theta_index in range(len(line)):
+                    theta = line[theta_index]
+                    plus_weights = copy.deepcopy(weights_matrices)
+                    minus_weights = copy.deepcopy(weights_matrices)
+                    minus_theta = theta - epsilon
+                    plus_theta = theta + epsilon
+
+                    plus_weights[weight_matrix_index][line_index][theta_index] = plus_theta
+                    minus_weights[weight_matrix_index][line_index][theta_index] = minus_theta
+
+
+                    forward_plus = NeuralNetworkMath.all_activations_for(inputs=[float_input],
+                                                                            weights_matrices=plus_weights,
+                                                                          bias_matrices=bias_weights)
+                    forward_minus = NeuralNetworkMath.all_activations_for(inputs=[float_input],
+                                                                            weights_matrices=minus_weights,
+                                                                            bias_matrices=bias_weights)
+
+                    real_output_plus = forward_plus[-1]
+                    real_output_minus = forward_minus[-1]
+
+                    cost_plus = NeuralNetworkMath.loss(real_output_plus, expected_output)
+                    cost_minus = NeuralNetworkMath.loss(real_output_minus, expected_output)
+
+                    grad_approx = (cost_plus - cost_minus) / (2 * epsilon)
+                    numerical_grad_matrix.append(grad_approx)
+
+        return numerical_grad_matrix
+
+    @classmethod
+    def array_to_matrix(cls, array=[]):
+        return list(map(lambda inp: [inp], array))
+
+    @classmethod
+    def activation_for(cls, inputs=[], weights=[], bias=[]):
+        np_weights = np.array(weights)
+        multiplied = np_weights.dot(inputs)
+        zs = np.add(multiplied, bias)
+        return NeuralNetworkMath.sigmoid(zs)
+
+    @classmethod
+    def all_activations_for(cls, inputs=[], weights_matrices=[], bias_matrices=[]):
+        activations = [inputs]
+        accumulator = inputs
+        for layer in range(len(weights_matrices)):
+            weights = weights_matrices[layer]
+            bias = bias_matrices[layer]
+            accumulator = NeuralNetworkMath.activation_for(inputs=accumulator,
+                                                           weights=weights,
+                                                           bias=bias)
+            activations.append(accumulator)
+        return activations
+
+    @classmethod
+    def example_expected_output(cls, example, dataset):
+        example_class = example.get_class()
+        if cls.is_number(example_class):
+            return [[float(example_class)]]
+        else:
+            possible_classes = dataset.get_uniq_classes()
+            return list(map(lambda klass: [1] if klass == example_class else [0], possible_classes))
+
+    @classmethod
+    def is_number(cls, string):
+        try:
+            float(string)
+            return True
+        except ValueError:
+            return False
+
+    @classmethod
+    def calculate_deltas(cls, weights_matrices=[], expected_outputs=[], activations=[]):
+        output_activation = activations[-1]
+        deltas = cls.output_delta(expected_output=expected_outputs, output=output_activation)
+        deltas_matrices = [deltas.tolist()]
+        last_delta = deltas.copy()
+        # deltas do bias são os prif training_set.class_data_type() == float oróprios deltas da camada seguinte. (A12S101)
+        bias_deltas_matrices = [deltas.tolist()]
+        for layer in reversed(range(len(weights_matrices)-1)):
+            weight_matrix = weights_matrices[layer + 1]
+            activation = activations[layer+1]
+            next_layer_delta = NeuralNetworkMath.delta(activation,
+                                                       weight_matrix,
+                                                       last_delta)
+            last_delta = next_layer_delta
+
+            # deltas do bias são os próprios deltas da camada seguinte. (A12S101)
+            bias_deltas_matrices.insert(0, next_layer_delta.tolist())
+            deltas_matrices.insert(0, next_layer_delta.tolist())
+        return deltas_matrices, bias_deltas_matrices
+
+    @classmethod
+    def update_weights(cls, old_weights=[], gradients_matrices=[], alpha=0.1):
+        alpha_gradients = list(map(lambda matrix: np.multiply(matrix, alpha), gradients_matrices))
+        new_weights_matrices = NeuralNetworkMath.matrix_list_operation(
+            np.subtract,
+            old_weights,
+            alpha_gradients
+        )
+        return new_weights_matrices

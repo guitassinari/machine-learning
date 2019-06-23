@@ -34,3 +34,12 @@ def test_output_delta():
     expected_output = [1, 0, 0]
     deltas = NeuralNetworkMath.output_delta(real_output, expected_output)
     assert all([a == b for a, b in zip(deltas, [-1, 1, 0])])
+
+
+def test_gradient():
+    activations = [[.5], [.5], [.5]]
+    deltas = [[.5], [1], [2]]
+    expected_gradient = [[.25], [.5], [1]]
+    gradient = NeuralNetworkMath.gradient(activations, deltas)
+    for index in range(len(gradient)):
+        assert all([a == b for a, b in zip(gradient[index], expected_gradient[index])])

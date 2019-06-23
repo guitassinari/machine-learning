@@ -15,6 +15,7 @@ parameters = {
     "lambda": 0.1
 }
 
+
 def test_weight_matrices():
     nn = NeuralNetwork(parameters, dataset, debug=True)
     assert len(nn.weight_matrices) == 2  # input -> hidden, hidden -> output
@@ -41,5 +42,5 @@ def test_hidden_activations():
 def test_backpropagate():
     nn = NeuralNetwork(parameters, dataset, debug=True)
 
-    nn.back_propagate([0])
+    nn.calculate_deltas([0])
     assert nn.deltas[2][0] == [0.9605766589005886]

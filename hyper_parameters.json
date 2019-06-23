@@ -1,7 +1,13 @@
 {
   "parameters": [
-    { "n_trees": 10, "n_attr_sample": 6, "max_depth": 15 },
-    { "n_trees": 25, "n_attr_sample": 6, "max_depth": 15 },
-    { "n_trees": 50, "n_attr_sample": 6, "max_depth": 15 }
+    { "layers_structure": [2], "lambda": 0.1, "alpha": 0.01, "batch_size": 4},
+    { "layers_structure": [4], "lambda": 0.1, "alpha": 0.01, "batch_size": 4},
+    { "layers_structure": [8], "lambda": 0.1, "alpha": 0.01, "batch_size": 4},
+    { "layers_structure": [12], "lambda": 0.1, "alpha": 0.01, "batch_size": 4},
+    { "layers_structure": [2, 2], "lambda": 0.1, "alpha": 0.01, "batch_size": 4},
+    { "layers_structure": [4, 4], "lambda": 0.1, "alpha": 0.01, "batch_size": 4},
+    { "layers_structure": [8, 8], "lambda": 0.1, "alpha": 0.01, "batch_size": 4},
+    { "layers_structure": [12, 12], "lambda": 0.1, "alpha": 0.01, "batch_size": 4},
+    { "layers_structure": [40, 40], "lambda": 0.1, "alpha": 0.01, "batch_size": 4}
   ]
 }

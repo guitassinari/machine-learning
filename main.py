@@ -21,9 +21,19 @@ parser.add_argument("-cp", dest="class_position",
                     default=-1,
                     nargs=1,
                     type=int)
+parser.add_argument("-cn", dest="normalization",
+                    help="1 normalize, zero do not.",
+                    default=1,
+                    nargs=1,
+                    type=int)
 parser.add_argument("-model", dest="model_name",
                     help="Model to be used. Can be either Forest or NeuralNetwork",
-                    nargs=1, default="Forest")
+                    nargs=1, default="NeuralNetwork")
+parser.add_argument("-ignore", dest="ignore_columns",
+                    help="indexes of example attributes to be ignored when reading dataset",
+                    nargs="+",
+                    type=int,
+                    default=[])
 
 
 def run():
@@ -32,27 +42,31 @@ def run():
     hyper_parameters_file_path = args.parameters
     cv_divisions = args.cross_validation_folds[0]
     class_position = args.class_position[0]
+    ignore_columns = args.ignore_columns
+    norm = args.normalization[0]
 
     model_name = args.model_name[0]
     module = importlib.import_module("models."+model_name)
     model_class = getattr(module, model_name)
 
+    print("\n")
     print("Dataset path:", dataset_file_path)
     print("Hyper parameters path:", hyper_parameters_file_path)
     print("Cross Validation K-Fold:", cv_divisions)
     print("Class position: ", class_position)
-
-    dataset = DatasetFile(dataset_file_path, class_position).read()
+    print("\n")
+    dataset = DatasetFile(dataset_file_path, class_position, norm, ignore_columns).read()
 
     hyper_parameters_list = HyperParametersFile(hyper_parameters_file_path).read()
     cv = CrossValidation(hyper_parameters_list, model_class, cv_divisions, dataset)
 
     performance_indexes = cv.get_performance_indexes()
-    best_hyper_parameter_index = performance_indexes.index(np.min(performance_indexes))
+    best_hyper_parameter_index = performance_indexes.index(np.max(performance_indexes))
     best_hyper_parameter = hyper_parameters_list[best_hyper_parameter_index]
     print(best_hyper_parameter)
 
-    LineChart([performance_indexes])
+    layer_structures = list(map(lambda hp: hp["layers_structure"], hyper_parameters_list))
+    LineChart([performance_indexes], layer_structures, min=0, max=1)
     LineChart.show_charts()
 
 

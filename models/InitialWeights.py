@@ -12,6 +12,6 @@ class InitialWeights:
         if debug:
             return np.ones((lines, columns))
         else:
-            return np.random.random((lines, columns))
+            return np.random.randn(lines, columns)
 
 
