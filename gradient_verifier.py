@@ -58,7 +58,7 @@ def run():
     print("\n")
 
     print("------------ LENDO DATASET --------------\n")
-    dataset = DatasetFile(dataset_file_path, class_position).read()
+    dataset = DatasetFile(dataset_file_path, class_position, normalization=False).read()
     examples = dataset.get_examples()
 
     print("------------ CALCULANDO ERRO / CUSTO -----------------\n")
