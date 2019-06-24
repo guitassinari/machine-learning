@@ -14,21 +14,22 @@ parser.add_argument("dataset", help="dataset file path")
 parser.add_argument("parameters", help="hyper parameters file path")
 parser.add_argument("-cv", dest="cross_validation_folds",
                     help="number of cross validation folds",
+                    default=[2],
                     nargs=1,
                     type=int)
 parser.add_argument("-cp", dest="class_position",
                     help="class position inside dataset file, like an array index",
-                    default=-1,
+                    default=[-1],
                     nargs=1,
                     type=int)
 parser.add_argument("-cn", dest="normalization",
                     help="1 normalize, zero do not.",
-                    default=1,
+                    default=[1],
                     nargs=1,
                     type=int)
 parser.add_argument("-model", dest="model_name",
                     help="Model to be used. Can be either Forest or NeuralNetwork",
-                    nargs=1, default="NeuralNetwork")
+                    type=str, default="NeuralNetwork")
 parser.add_argument("-ignore", dest="ignore_columns",
                     help="indexes of example attributes to be ignored when reading dataset",
                     nargs="+",
@@ -43,9 +44,9 @@ def run():
     cv_divisions = args.cross_validation_folds[0]
     class_position = args.class_position[0]
     ignore_columns = args.ignore_columns
-    norm = args.normalization
+    norm = args.normalization[0] == 1
 
-    model_name = args.model_name[0]
+    model_name = args.model_name
     module = importlib.import_module("models."+model_name)
     model_class = getattr(module, model_name)
 

@@ -30,7 +30,7 @@ class DatasetFile:
                     attributes_and_klass = attributes + [klass]
                     examples.append(Example(list(range(len(attributes_and_klass))), attributes_and_klass))
         dataset = Dataset(examples)
-        if (self.normalization==1):
+        if self.normalization:
             dataset.data_normalization()
 
         return dataset

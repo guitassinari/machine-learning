@@ -300,8 +300,8 @@ class Dataset:
         vector_max = np.amax(attributes_matrix, axis=0)
 
         normalize_factors_list = np.multiply(2, np.subtract(vector_max, vector_min))
-        normalize_factors_matrix = list(map(lambda factor: factor, normalize_factors_list))
-        normalized_attributes = list(map(lambda example_attrs: np.divide(example_attrs, normalize_factors_matrix), attributes_matrix))
+        normalize_factors_matrix_without_zeros = np.where(normalize_factors_list == 0, 1, normalize_factors_list)
+        normalized_attributes = list(map(lambda example_attrs: np.divide(example_attrs, normalize_factors_matrix_without_zeros), attributes_matrix))
         normalized_attributes = np.subtract(normalized_attributes, 1)
 
         new_examples = []

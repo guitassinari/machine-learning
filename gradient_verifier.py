@@ -10,17 +10,13 @@ import numpy as np
 
 import argparse
 
-parser = argparse.ArgumentParser(description='Process some integers.')
+parser = argparse.ArgumentParser(description='Verifies gradients through backpropagation and gradient approximation')
 
 parser.add_argument("-cp", dest="class_position",
                     help="class position inside dataset file, like an array index",
                     default=-1,
                     nargs=1,
                     type=int)
-
-parser.add_argument("-model", dest="model_name",
-                    help="Model to be used. Can be either Forest or NeuralNetwork",
-                    nargs=1, default="Forest")
 parser.add_argument("network",
                     help="Defines the neural network structure file path")
 parser.add_argument("weights",

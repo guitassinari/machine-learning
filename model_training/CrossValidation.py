@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from model_training.StratifiedDivisor import StratifiedDivisor
 from performance.ModelPerformance import ModelPerformance
 import numpy as np

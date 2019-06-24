@@ -65,11 +65,6 @@ class NeuralNetwork:
             inputs = example.get_body()
             expected_outputs = NeuralNetworkMath.example_expected_output(example, self.training_set)
             outputs = self.outputs(inputs)
-
-            if (example_index+1) % 5 == 0:
-                loss = NeuralNetworkMath.loss(outputs, expected_outputs)
-                losses.append(loss)
-                counters.append(example_index+1)
             deltas, bias_deltas = NeuralNetworkMath.calculate_deltas(weights_matrices=self.weight_matrices,
                                                                      expected_outputs=expected_outputs,
                                                                      activations=self.last_activations)
@@ -93,6 +88,10 @@ class NeuralNetwork:
 
             # fim do batch ou último exemplo
             if batch_counter == self.batch_size or example_index == n_examples:
+                loss = NeuralNetworkMath.loss(outputs, expected_outputs)
+                losses.append(loss)
+                counters.append(example_index + 1)
+
                 batch_counter = 0
                 regularization = NeuralNetworkMath.gradients_regularization(
                     weights_matrices=self.weight_matrices,
